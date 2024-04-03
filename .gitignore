@@ -1,0 +1,8 @@
+sheets/*
+data/*
+__pycache__/*
+util/__pycache__/*
+collections/*
+mycollection.json
+!sheets/EXAMPLE.csv
+show_create_sheet.csv

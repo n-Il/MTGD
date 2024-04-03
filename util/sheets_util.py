@@ -93,3 +93,17 @@ class sheets_util:
                 return "ja"
             case _:
                 return card_lang
+
+    @staticmethod
+    def get_wotc_lang(card_lang):
+        match card_lang:
+            case "zhs":
+                return "CS"
+            case "zht":
+                return "CT"
+            case "ko":
+                return "KR"
+            case "ja":
+                return "JP"
+            case _:
+                return card_lang.upper() 

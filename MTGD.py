@@ -29,6 +29,10 @@ def main():
         allcards_util.download()
         sys.exit(0)
 
+    if '-downloadimages':
+        collection.load_from_file()
+        collection.get_images()
+
     if '-lookup' in sys.argv:
         card_lookup_cli()
 
@@ -58,8 +62,12 @@ def main():
         print("")
         print("\t[-lookup] lets you test set/cn combinations against scryfall's english entries.(unoptimized)")
         print("\t[-download] downloads the latest scryfall data(~2GB) to your computer")
+        print("\t[-downloadimages] downloads the card images for cards in your collection to your computer.")
         print("\t[-collect] converts the sheets you created to a local collection file with scryfall data")
         print("\t[-compile] converts the local collection file into a spreadsheet with card names among other fields")
+        print("\t[-load] loads your collection into memory and provides some simple stats")
+        print("\t[-showcreate] loads your collection into memory and creates a spreadsheet that can be used to create it")
+
 
     if '-load' in sys.argv:
         collection.load_from_file()
@@ -79,6 +87,10 @@ def main():
         print("\n******************************************")
         collection.set_info()
 
+        #rarities
+        print("\n******************************************")
+        collection.rarity_info()
+
         #top cards by count
         print("\n******************************************")
         collection.topcards_info()
@@ -86,6 +98,22 @@ def main():
     if '-compile' in sys.argv:
         collection.load_from_file()
         collection.spit_out_sheet()
+
+    if '-showcreate' in sys.argv:
+        collection.load_from_file()
+        collection.spit_out_create()
+
+    #if '-what' in sys.argv:
+    #    collection.load_from_file()
+    #    first = collection.cards[0]
+    #    for key in first.keys():
+    #        print("key:",key,"\nValue:",first[key],"\n")
+
+    #if '-testlinks' in sys.argv:
+    #    collection.load_from_file()
+    #    first = collection.cards[0]
+    #    for key in first["image_uris"]:
+    #        print("key:",key,"\nValue:",first["image_uris"][key],"\n")
             
 if __name__ == "__main__":
     start_time = time.time()

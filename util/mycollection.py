@@ -1,5 +1,9 @@
 import json
 import os
+from .sheets_util import sheets_util
+import requests
+import time
+
 class mycollection:
     def __init__(self):
         self.cards = []
@@ -112,6 +116,20 @@ class mycollection:
         print("Top 20 Cards from your collection")
         for s,c in list(sorted_names.items())[:20]:
             print(c,"copies of",s)
+
+    def rarity_info(self):
+        rarities = dict()
+        for card in self.cards:
+            if card["rarity"] in rarities:
+                rarities[card["rarity"]] += card["MTGD_foil_count"]
+                rarities[card["rarity"]] += card["MTGD_nonfoil_count"]
+            else:
+                rarities[card["rarity"]] = card["MTGD_foil_count"] + card["MTGD_nonfoil_count"]
+        sorted_rarities = {k: v for k, v in sorted(rarities.items(), key=lambda item: item[1],reverse=True)}
+        print("Rarity Counts:")
+        for s,c in list(sorted_rarities.items()):
+            print(c,str(s)+"s")
+                
     
     def spit_out_sheet(self):
         if os.path.exists("output_sheet.csv"):
@@ -158,3 +176,95 @@ class mycollection:
                         #CMC
                         line += str(card["cmc"]) + "\n"
                         f.write(line)
+
+    def spit_out_create(self):
+        if os.path.exists("show_create_sheet.csv"):
+            print("show_create_sheet.csv already exists")
+        else:
+            with open("show_create_sheet.csv","w") as f:
+                f.write("Count,Set,Set# (useme★),Card Name,Foil,List,Language(if not english)\n")
+                for card in self.cards:
+                    if card["MTGD_foil_count"] > 0:
+                        line = ""
+                        #count?
+                        if card["MTGD_foil_count"] > 1:
+                            line += str(card["MTGD_foil_count"])
+                        line += ","
+                        #set
+                        if card["set"] == "plst":
+                            split = card["collector_number"].split("-")
+                            line += split[0]
+                            line += ","
+                            #set#
+                            line += split[1]
+                            line += ","
+                            line += ","
+                        else:
+                            line += card["set"].upper()
+                            line += ","
+                            #set#
+                            line+= card["collector_number"]
+                            line += ","
+                            line += ","
+                        #foil
+                        line += "Yes,"
+                        #list?
+                        if card["set"] == "plst":
+                            line+="Yes"
+                        line += ","
+                        #language?
+                        if card["lang"] != "en":
+                            line += sheets_util.get_wotc_lang(card["lang"])
+                        line += "\n"
+                        f.write(line)
+                    if card["MTGD_nonfoil_count"] > 0:
+                        line = ""
+                        #count?
+                        if card["MTGD_nonfoil_count"] > 1:
+                            line += str(card["MTGD_nonfoil_count"])
+                        line += ","
+                        #set
+                        if card["set"] == "plst":
+                            split = card["collector_number"].split("-")
+                            line += split[0]
+                            line += ","
+                            #set#
+                            line += split[1]
+                            line += ","
+                            line += ","
+                        else:
+                            line += card["set"].upper()
+                            line += ","
+                            #set#
+                            line+= card["collector_number"]
+                            line += ","
+                            line += ","
+                        #foil
+                        line += ","
+                        #list?
+                        if card["set"] == "plst":
+                            line+="Yes"
+                        line += ","
+                        #language?
+                        if card["lang"] != "en":
+                            line += sheets_util.get_wotc_lang(card["lang"])
+                        line += "\n"
+                        f.write(line)
+
+
+    def get_images(self):
+        if not os.path.isdir('data'):
+            os.mkdir('data')
+        if not os.path.exists("data/images"):
+            os.mkdir("data/images")
+        for card in self.cards:
+            if not os.path.exists("data/images/"+str(card["set"])):
+                os.mkdir("data/images/"+str(card["set"]))
+            #if image already there, skip download
+            if not os.path.exists("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+".png"):
+                if "image_uris" in card.keys() and "png" in card["image_uris"].keys():
+                    with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+".png", "wb") as f:
+                        f.write(requests.get(card["image_uris"]["png"]).content)
+                        time.sleep(0.2)#1 seconds = 1000 milliseconds
+                else:
+                    print("Error getting image for:",card["name"])
