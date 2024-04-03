@@ -29,7 +29,7 @@ def main():
         allcards_util.download()
         sys.exit(0)
 
-    if '-downloadimages':
+    if '-downloadimages' in sys.argv:
         collection.load_from_file()
         collection.get_images()
 
