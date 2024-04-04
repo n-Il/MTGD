@@ -6,6 +6,7 @@ import os
 from util.allcards_util import allcards_util
 from util.sheets_util import sheets_util
 from util.mycollection import mycollection
+from util.myquery import myquery
 
 def card_lookup_cli():
     actuallyallcards = allcards_util.filtered_get(lambda x: True)
@@ -29,14 +30,14 @@ def main():
         allcards_util.download()
         sys.exit(0)
 
-    if '-downloadimages' in sys.argv:
+    elif '-downloadimages' in sys.argv:
         collection.load_from_file()
         collection.get_images()
 
-    if '-lookup' in sys.argv:
+    elif '-lookup' in sys.argv:
         card_lookup_cli()
 
-    if '-collect' in sys.argv:
+    elif '-collect' in sys.argv:
         if os.path.exists("mycollection.json"):
             print("collection file exists")
         else:
@@ -55,7 +56,7 @@ def main():
                 f.write("]")
             print("done")
 
-    if '-help' in sys.argv:
+    elif '-help' in sys.argv:
         print("\tInput your collection using this spreadsheet:")
         print("\thttps://docs.google.com/spreadsheets/d/1d5eBMMFTuUER844bV1ShyKUCC8U0s6GVq10g9oklSmE/edit?usp=sharing")
         print("\tDownload the Sheet(s) as a CSV and put them in a folder called \"sheets\"")
@@ -69,7 +70,7 @@ def main():
         print("\t[-showcreate] loads your collection into memory and creates a spreadsheet that can be used to create it")
 
 
-    if '-load' in sys.argv:
+    elif '-load' in sys.argv:
         collection.load_from_file()
         print("\n******************************************")
         print("Unique Cards in Collection: "+str(len(collection.cards)))
@@ -95,14 +96,28 @@ def main():
         print("\n******************************************")
         collection.topcards_info()
 
-    if '-compile' in sys.argv:
+    elif '-compile' in sys.argv:
         collection.load_from_file()
         collection.spit_out_sheet()
 
-    if '-showcreate' in sys.argv:
+    elif '-showcreate' in sys.argv:
         collection.load_from_file()
         collection.spit_out_create()
 
+    elif '-q' in sys.argv:
+        i = sys.argv.index('-q')
+        if len(sys.argv) < (i+2):
+            print("ERROR:EMPTY QUERY")
+        else:
+            q = " ".join(sys.argv[i+1:])
+            print("Your Query:["+q+"]")
+            collection.load_from_file()
+            query = myquery(collection,q)
+            del collection#try and allow python to free some memory
+            result = query.result_cards
+            print("creating result_sheet.csv")
+            sheets_util.create_result_sheet(result)
+    
     #if '-what' in sys.argv:
     #    collection.load_from_file()
     #    first = collection.cards[0]

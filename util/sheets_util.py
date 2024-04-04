@@ -91,6 +91,8 @@ class sheets_util:
                 return "ko"
             case "jp":
                 return "ja"
+            case "sp":
+                return "es"
             case _:
                 return card_lang
 
@@ -105,5 +107,53 @@ class sheets_util:
                 return "KR"
             case "ja":
                 return "JP"
+            case "es":
+                return "SP"
             case _:
                 return card_lang.upper() 
+
+    @staticmethod
+    def create_result_sheet(results):
+        with open("result_sheet.csv","w") as f:
+            f.write("Count,Name,Price,Set,CN,Foil,Lang,CMC\n")
+            for card in results:
+                if card["MTGD_foil_count"] > 0:
+                    line = ""
+                    #count
+                    line += str(card["MTGD_foil_count"]) + ","
+                    #name
+                    line += "\""+card["name"] + "\","
+                    #price
+                    line += (str(card["prices"]["usd_foil"]) if card["prices"]["usd_foil"] else "ERROR") + ","
+                    #set
+                    line += card["set"] + ","
+                    #cn
+                    line += card["collector_number"] + ","
+                    #foil
+                    line += "Yes,"
+                    #lang
+                    line += card["lang"] + ","
+                    #CMC
+                    line += str(card["cmc"]) + "\n"
+                    f.write(line)
+                if card["MTGD_nonfoil_count"] > 0:
+                    line = ""
+                    #count
+                    line += str(card["MTGD_nonfoil_count"]) + ","
+                    #name
+                    line += "\""+card["name"] + "\","
+                    #price
+                    line += (str(card["prices"]["usd"]) if card["prices"]["usd"] else "ERROR") + ","
+                    #set
+                    line += card["set"] + ","
+                    #cn
+                    line += card["collector_number"] + ","
+                    #foil
+                    line += ","
+                    #lang
+                    line += card["lang"] + ","
+                    #CMC
+                    line += str(card["cmc"]) + "\n"
+                    f.write(line)
+
+

@@ -37,8 +37,15 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 
 
 ### Downloading Card Data
-Run MTGD with the '-download' command flag. This will download the bulk data for all cards from the scryfall API.
-The Scryfall Bulk data is not updated hourly. Please do not generate unnecesary traffic and only download the data when you must.
+- Run MTGD with the '-download' command flag. This will download the bulk data for all cards from the scryfall API.
+- The Scryfall Bulk data is not updated hourly. Please do not generate unnecesary traffic and only download the data when you must.
+
+### Downloading Card Image Data
+- You must have a mycollection.json file
+- This process may take a SIGNIFICANT amount of time to complete.
+- Run MTGD with the '-downloadimages' command flag. This will download the card images of cards in your collection.
+- I may find a more efficient method of implementing this that does not use scryfall in the future.
+    - For now please try to limit how many images you query and how often in case this leads to significant strain on scryfall infrastructure.
 
 ### Convert your Sheets into a Collection
 - Download your spreadsheets as Comma Sepperated Value(CSV) files and place them in the sheets directory.
@@ -49,6 +56,15 @@ The Scryfall Bulk data is not updated hourly. Please do not generate unnecesary 
 - Run MTGD with the '-load' flag. This will generate some stats. 
 - Run MTGD with the '-compile' flag. This will generate a more rich spreadsheet with the entire collection data.
 - More features will come with time.
+
+### Convert your collection back into a spreadsheet
+- You must have a mycollection.json file
+- Run MTGD with the '-showcreate' flag, a show_create_sheet.csv file will be generated
+
+### Run A Query on your collection
+- Use the '-q' flag followed by your query
+- NOTE: This is realy inefficient if your query is a HUGE subset, for example 't:creature', I will write custom logic for queries that are simple in the future that will speed up this operation.
+- NOTE: Queries which include special characters like '>' that redirect output are not currently handled
 
 ## Contact Us
 At this point in the project, please feel free to open an issue on github for non-serious matters. The example sheet from the '-help' dialogue also includes an email you are welcome to use.

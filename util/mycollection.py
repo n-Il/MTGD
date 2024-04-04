@@ -3,6 +3,7 @@ import os
 from .sheets_util import sheets_util
 import requests
 import time
+import sys
 
 class mycollection:
     def __init__(self):
@@ -25,6 +26,8 @@ class mycollection:
         sum_ignore_bulk = 0.0
         sum_price = 0.0
         errors = 0
+        errors_nonenglish = 0
+        errors_english = 0
         errors_foil = 0
         for card in self.cards:
             if card["MTGD_foil_count"] > 0:
@@ -47,6 +50,10 @@ class mycollection:
                         sum_ignore_bulk += (price * card["MTGD_foil_count"])
                 else:
                     errors_foil += card["MTGD_foil_count"]
+                    if card["lang"] != "en":
+                        errors_nonenglish += card["MTGD_foil_count"]
+                    else:
+                        errors_english += card["MTGD_foil_count"]
             if card["MTGD_nonfoil_count"] > 0:
                 if card["prices"]["usd"] != None:
                     price =  float(card["prices"]["usd"])
@@ -67,8 +74,14 @@ class mycollection:
                         sum_ignore_bulk += (price * card["MTGD_nonfoil_count"])
                 else:
                     errors += card["MTGD_nonfoil_count"]
+                    if card["lang"] != "en":
+                        errors_nonenglish += card["MTGD_nonfoil_count"]
+                    else:
+                        errors_english += card["MTGD_nonfoil_count"]
         print("Price Lookup Errors Non-Foil:",errors)
-        print("Price Lookup Errors Foil:",errors_foil)
+        print("vs Price Lookup Errors Foil:",errors_foil)
+        print("Price Lookup Errors Non-English:",errors_nonenglish)
+        print("vs Price Lookup Errors English:",errors_english)
         print("Cards Over $1:",cards_over_1)
         print("Cards Over $5:",cards_over_5)
         print("Cards Over $10:",cards_over_10)
@@ -251,7 +264,7 @@ class mycollection:
                         line += "\n"
                         f.write(line)
 
-
+    #TODO this doesn't handle multilanguage or ?foil?
     def get_images(self):
         if not os.path.isdir('data'):
             os.mkdir('data')
@@ -262,9 +275,19 @@ class mycollection:
                 os.mkdir("data/images/"+str(card["set"]))
             #if image already there, skip download
             if not os.path.exists("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+".png"):
-                if "image_uris" in card.keys() and "png" in card["image_uris"].keys():
+                if "image_uris" not in card.keys() and "card_faces" in card.keys():
+                    if len(card["card_faces"]) > 2:
+                        print("Found a card with more than 2 faces, I dont even....")
+                    else:
+                        #download front image as normal
+                        with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+".png", "wb") as f:
+                            f.write(requests.get(card["card_faces"][0]["image_uris"]["png"]).content)
+                            time.sleep(0.2)#1 seconds = 1000 milliseconds
+                        #download back image with back
+                        with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"back.png", "wb") as f:
+                            f.write(requests.get(card["card_faces"][1]["image_uris"]["png"]).content)
+                            time.sleep(0.2)#1 seconds = 1000 milliseconds
+                else:
                     with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+".png", "wb") as f:
                         f.write(requests.get(card["image_uris"]["png"]).content)
                         time.sleep(0.2)#1 seconds = 1000 milliseconds
-                else:
-                    print("Error getting image for:",card["name"])
