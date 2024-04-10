@@ -22,7 +22,7 @@ class allcards_util:
             os.mkdir('data/AC')
         #Download in chunks
         if os.path.exists("data/AC/all-cards-"+download_link.split('-')[-1]):
-            print("NEWEST AC EXISTS")
+            print("ERROR: You already have the latest all cards file.")
         else:
             chunk_size = 1024 * 1024 #1MB
             download = requests.get(download_link,stream=True)
@@ -32,26 +32,39 @@ class allcards_util:
                         f.write(chunk)
     
     @staticmethod
-    def filtered_get(card_filter):
+    def filtered_get(card_filter,debug = False):
         list_of_files = list(map(lambda x: "data/AC/" + x,os.listdir("data/AC")))
         latest = max(list_of_files, key=os.path.getctime)
         cards = dict()
+        num_lines = -2#first and last
+        if debug:
+            with open(latest,"r") as f:
+                for line in f:
+                    num_lines += 1
+        num_lines = str(num_lines)
+        len_num_lines = len(num_lines)
         with open(latest) as f:
+            counter = 0
             for line in f:
                 line = line.strip()#remove the newlines
                 if line == "[" or line == "]":
                     continue
+                if debug:
+                    counter += 1
+                    print("Filtering",str(counter).zfill(len_num_lines)+"/"+num_lines,end='\r')
                 line = line.strip(',')
-                #line = line[:-1]#remove the comma at the end
                 try:
                     card = json.loads(line)
                     if card_filter(card):
                         if (card["set"],card["collector_number"],card["lang"]) in cards:
-                            print("already exists")
+                            print("ERROR:Card already exists")
                         else:
                             cards[(card["set"],card["collector_number"],card["lang"])] = card
                 except Exception as e:
+                    print()
                     print("error")
                     print(line)
+        if debug:
+            print()#move cursor to next line for progress
         return cards
         

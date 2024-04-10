@@ -9,8 +9,9 @@ from util.mycollection import mycollection
 from util.myquery import myquery
 
 def card_lookup_cli():
-    actuallyallcards = allcards_util.filtered_get(lambda x: True)
-    print(len(actuallyallcards))
+    print("Loading all cards into memory... This may take a while")
+    #actuallyallcards = allcards_util.filtered_get(lambda x: True)
+    actuallyallcards = allcards_util.filtered_get(lambda x: x["lang"] == "en")
     x = None
     while True:
         x = input("Enter set and number:")
@@ -39,9 +40,8 @@ def main():
 
     elif '-collect' in sys.argv:
         if os.path.exists("mycollection.json"):
-            print("collection file exists")
+            print("ERROR:collection file exists")
         else:
-            print("creating mycollection.json")
             collection = sheets_util.get_collection()
             with open("mycollection.json",'w') as f:
                 f.write("[\n")
@@ -54,7 +54,6 @@ def main():
                         f.write(json.dumps(card)+",\n")
                         i += 1
                 f.write("]")
-            print("done")
 
     elif '-help' in sys.argv:
         print("\tInput your collection using this spreadsheet:")
@@ -115,7 +114,6 @@ def main():
             query = myquery(collection,q)
             del collection#try and allow python to free some memory
             result = query.result_cards
-            print("creating result_sheet.csv")
             sheets_util.create_result_sheet(result)
     
     #if '-what' in sys.argv:

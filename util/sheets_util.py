@@ -10,12 +10,11 @@ class sheets_util:
     def get_sheets():
         sheets = dict()
         if not os.path.isdir('sheets'):
-            print("ERROR: no sheets directory")
+            print("ERROR:No sheets directory")
             sys.exit(0)
         sheet_files = list(map(lambda x: "sheets/" + x,os.listdir("sheets")))
         for sheet_file in sheet_files:
             if os.path.isfile(sheet_file) and sheet_file[-4:] == ".csv":
-                print("Loading:",sheet_file)
                 sheet = []
                 with open(sheet_file) as f:
                     for line in f.readlines()[1:]:
@@ -46,10 +45,18 @@ class sheets_util:
                     collection[(card["set"],card["cn"],card["lang"],card["foil"])]["count"] += card["count"]
                 else:
                     collection[(card["set"],card["cn"],card["lang"],card["foil"])] = card
+                if card["lang"] != "en":
+                    if (card["set"],card["cn"],"en",card["foil"]) not in collection:
+                        extra_card = card.copy() 
+                        extra_card["lang"] = "en"
+                        extra_card["extra"] = True
+                        extra_card["count"] = 0
+                        collection[(extra_card["set"],extra_card["cn"],extra_card["lang"],extra_card["foil"])] = extra_card
+                    else:#assign the extra tag even if we have an english copy, as we want to speed up lookup later
+                        collection[(card["set"],card["cn"],"en",card["foil"])]["extra"] = True
 
-
-        allcards = allcards_util.filtered_get(lambda x: (x["set"],x["collector_number"],x["lang"],True) in collection or (x["set"],x["collector_number"],x["lang"],False) in collection )
-       
+        allcards = allcards_util.filtered_get(lambda x: (x["set"],x["collector_number"],x["lang"],True) in collection or (x["set"],x["collector_number"],x["lang"],False) in collection)
+        
         sf_collection = list()
         for key in allcards.keys():
             card = allcards[key]
@@ -57,18 +64,23 @@ class sheets_util:
             if (key[0],key[1],key[2],True) in collection:
                 collection_card = collection.pop((key[0],key[1],key[2],True))
                 card["MTGD_foil_count"] = collection_card["count"]
+                if "extra" in collection_card:
+                    card["MTGD_extra"] = True
             else:
                 card["MTGD_foil_count"] = 0
             #if non-foil
             if (key[0],key[1],key[2],False) in collection:
                 collection_card = collection.pop((key[0],key[1],key[2],False))
                 card["MTGD_nonfoil_count"] = collection_card["count"]
+                if "extra" in collection_card:
+                    card["MTGD_extra"] = True
             else:
                 card["MTGD_nonfoil_count"] = 0
             sf_collection.append(card)
 
         for key in collection.keys():
-            print("SCRYFALL MISSING:",(key[0],key[1],key[2]))
+            if collection[key]["count"] != 0:
+                print("ERROR:Scryfall missing ",(key[0],key[1],key[2]))
 
         return sf_collection
             
@@ -80,7 +92,7 @@ class sheets_util:
     def get_scryfall_lang(card_lang):
         possible_langs = {"CS","CT","KR","JP","IT","DE","RU","FR","EN","ES","PT","PH"}
         if card_lang not in possible_langs:
-            print("Invalid Language:[",card_lang,"]")
+            print("ERROR:Invalid Language:[",card_lang,"]")
         card_lang = card_lang.lower()
         match card_lang:
             case "cs":

@@ -60,13 +60,13 @@ class myquery:
         r = requests.get("https://api.scryfall.com/cards/search",params={"q":self.q})
         response = r.json()
         if response["object"] == "error":
-            print("Error:"+str(r)+"\n"+str(response))
+            print("ERROR:error type "+str(r)+"\n"+str(response))
         elif response["object"] == "list":
             if "warnings" in response:
                 print("WARNINGS:",response["warnings"])
             self.response = response
         else:
-            print("Unkown Response Object",r["object"])
+            print("ERROR:Unkown Response Object",r["object"])
 
 
     def page_and_filter(self):

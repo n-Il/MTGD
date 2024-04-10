@@ -10,8 +10,11 @@ class mycollection:
         self.cards = []
 
     def load_from_file(self,file = "mycollection.json"):
-        with open(file) as f:
-            self.cards = json.load(f)
+        if not os.path.exists(file):
+            print("ERROR:"+str(file),"doesn't exist, please run '-collect'")
+        else:
+            with open(file) as f:
+                self.cards = json.load(f)
 
     def count_cards(self):
         sum = 0
@@ -22,6 +25,11 @@ class mycollection:
 
     #price
     def price_info(self):
+
+        english_print_lookups = dict()
+        for card in self.cards:
+            if "MTGD_extra" in card:
+                english_print_lookups[(card["set"],card["collector_number"])] = card["prices"]
         cards_over_1,cards_over_5,cards_over_10,cards_over_25,cards_over_50,cards_over_100 = 0,0,0,0,0,0
         sum_ignore_bulk = 0.0
         sum_price = 0.0
@@ -49,10 +57,29 @@ class mycollection:
                     if price >= 1:
                         sum_ignore_bulk += (price * card["MTGD_foil_count"])
                 else:
-                    errors_foil += card["MTGD_foil_count"]
                     if card["lang"] != "en":
-                        errors_nonenglish += card["MTGD_foil_count"]
+                        if english_print_lookups[(card["set"],card["collector_number"])]["usd_foil"] != None:
+                            print("Using english price for",card["name"])
+                            price = float(english_print_lookups[(card["set"],card["collector_number"])]["usd_foil"])
+                            if price >= 100:
+                                cards_over_100 += card["MTGD_foil_count"]
+                            elif price >= 50:
+                                cards_over_50 += card["MTGD_foil_count"]
+                            elif price >= 25:
+                                cards_over_25 += card["MTGD_foil_count"]
+                            elif price >= 10:
+                                cards_over_10 += card["MTGD_foil_count"]
+                            elif price >= 5:
+                                cards_over_5 += card["MTGD_foil_count"]
+                            elif price>= 1:
+                                cards_over_1 += card["MTGD_foil_count"]
+                            sum_price += (price * card["MTGD_foil_count"])
+                            if price >= 1:
+                                sum_ignore_bulk += (price * card["MTGD_foil_count"])
+                        else:
+                            errors_nonenglish += card["MTGD_foil_count"]
                     else:
+                        errors_foil += card["MTGD_foil_count"]
                         errors_english += card["MTGD_foil_count"]
             if card["MTGD_nonfoil_count"] > 0:
                 if card["prices"]["usd"] != None:
@@ -73,11 +100,36 @@ class mycollection:
                     if price >= 1:
                         sum_ignore_bulk += (price * card["MTGD_nonfoil_count"])
                 else:
-                    errors += card["MTGD_nonfoil_count"]
+                    #errors += card["MTGD_nonfoil_count"]
+                    #if card["lang"] != "en":
+                    #    errors_nonenglish += card["MTGD_nonfoil_count"]
+                    #else:
+                    #    errors_english += card["MTGD_nonfoil_count"]
                     if card["lang"] != "en":
-                        errors_nonenglish += card["MTGD_nonfoil_count"]
+                        if english_print_lookups[(card["set"],card["collector_number"])]["usd"] != None:
+                            print("Using english price for",card["name"])
+                            price = float(english_print_lookups[(card["set"],card["collector_number"])]["usd"])
+                            if price >= 100:
+                                cards_over_100 += card["MTGD_nonfoil_count"]
+                            elif price >= 50:
+                                cards_over_50 += card["MTGD_nonfoil_count"]
+                            elif price >= 25:
+                                cards_over_25 += card["MTGD_nonfoil_count"]
+                            elif price >= 10:
+                                cards_over_10 += card["MTGD_nonfoil_count"]
+                            elif price >= 5:
+                                cards_over_5 += card["MTGD_nonfoil_count"]
+                            elif price>= 1:
+                                cards_over_1 += card["MTGD_nonfoil_count"]
+                            sum_price += (price * card["MTGD_nonfoil_count"])
+                            if price >= 1:
+                                sum_ignore_bulk += (price * card["MTGD_nonfoil_count"])
+                        else:
+                            errors_nonenglish += card["MTGD_nonfoil_count"]
                     else:
+                        errors += card["MTGD_nonfoil_count"]
                         errors_english += card["MTGD_nonfoil_count"]
+
         print("Price Lookup Errors Non-Foil:",errors)
         print("vs Price Lookup Errors Foil:",errors_foil)
         print("Price Lookup Errors Non-English:",errors_nonenglish)
@@ -146,7 +198,7 @@ class mycollection:
     
     def spit_out_sheet(self):
         if os.path.exists("output_sheet.csv"):
-            print("output_sheet.csv already exists")
+            print("ERROR:output_sheet.csv already exists")
         else:
             with open("output_sheet.csv","w") as f:
                 f.write("Count,Name,Price,Set,CN,Foil,Lang,CMC\n")
@@ -192,7 +244,7 @@ class mycollection:
 
     def spit_out_create(self):
         if os.path.exists("show_create_sheet.csv"):
-            print("show_create_sheet.csv already exists")
+            print("ERROR:show_create_sheet.csv already exists")
         else:
             with open("show_create_sheet.csv","w") as f:
                 f.write("Count,Set,Set# (useme★),Card Name,Foil,List,Language(if not english)\n")
@@ -264,30 +316,40 @@ class mycollection:
                         line += "\n"
                         f.write(line)
 
-    #TODO this doesn't handle multilanguage or ?foil?
     def get_images(self):
         if not os.path.isdir('data'):
             os.mkdir('data')
         if not os.path.exists("data/images"):
             os.mkdir("data/images")
+        len_cards = str(len(self.cards))
+        digits_len_cards = len(len_cards)
+        counter = 0
         for card in self.cards:
+            counter += 1
+            print("Downloading",str(counter).zfill(digits_len_cards)+"/"+len_cards,end='\r')
             if not os.path.exists("data/images/"+str(card["set"])):
                 os.mkdir("data/images/"+str(card["set"]))
             #if image already there, skip download
-            if not os.path.exists("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+".png"):
+            if not os.path.exists("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"):
+                #print("Downloading:",str(counter)+"/"+len_cards,"("+card["name"]+")")
                 if "image_uris" not in card.keys() and "card_faces" in card.keys():
                     if len(card["card_faces"]) > 2:
-                        print("Found a card with more than 2 faces, I dont even....")
+                        print("\nERROR:Found a card with more than 2 faces, I dont even....\n")
                     else:
                         #download front image as normal
-                        with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+".png", "wb") as f:
+                        with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png", "wb") as f:
                             f.write(requests.get(card["card_faces"][0]["image_uris"]["png"]).content)
-                            time.sleep(0.2)#1 seconds = 1000 milliseconds
+
+                            time.sleep(0.2)#200 milliseconds
                         #download back image with back
-                        with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"back.png", "wb") as f:
+                        with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+"back.png", "wb") as f:
                             f.write(requests.get(card["card_faces"][1]["image_uris"]["png"]).content)
-                            time.sleep(0.2)#1 seconds = 1000 milliseconds
+                            time.sleep(0.2)
                 else:
-                    with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+".png", "wb") as f:
+                    with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png", "wb") as f:
                         f.write(requests.get(card["image_uris"]["png"]).content)
                         time.sleep(0.2)#1 seconds = 1000 milliseconds
+            else:
+                pass
+                #print("Skipping:",str(counter)+"/"+len_cards,"("+card["name"]+")")
+        print()#move cursor to next line for progress
