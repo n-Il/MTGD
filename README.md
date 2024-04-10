@@ -1,4 +1,4 @@
-# MTGD(name not final)
+# MTGD
 MTGD is a collection managment software for Magic the Gathering.
 
 MTGD is implemented on Linux, and at this time it's probably not functional on Windows.
