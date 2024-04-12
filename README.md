@@ -1,4 +1,4 @@
-# MTGD(name not final)
+# MTGD
 MTGD is a collection managment software for Magic the Gathering.
 
 MTGD is implemented on Linux, and at this time it's probably not functional on Windows.
@@ -7,11 +7,17 @@ MTGD uses and greatly appreciates the Scryfall API.
 
 The future of MTGD is to provide many popular filtering and lookup operations based only on cards you own in paper. 
 
-### Python Requirements
+### Python3 Requirements
 requests
 json
 
 ## How To: Use MTGD
+
+### The Command Structure
+- Run MTGD by typing 'python3 MTGD.py {flag}'. Flags can be found by using the '-help' flag.
+- MTGD is currently a simple project, and such will only accept a single flag at a time. For Example 'python3 MTGD.py -download -downloadcombos' will only download the card data.
+- MTGD may contain bugs with common CLI utilities like piping and redirection of output where these share symbols with the scryfall syntax. For Example 'python3 MTGD.py -q CMC>3'
+
 ### Create Spreadsheets for your cards 
 Before using this tool, it's important to understand how card data is collected. It is collected by you! I have provided a template for making spreadsheets that the tool can read in.
 The spreadsheets require the following fields to be filled out
@@ -35,7 +41,6 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 
 - the MTGD '-lookup' flag will read in the entire card database and start a lookup input loop. Enter a set and card number sepperated by a space and it will look if there exists a ENGLISH card with those set and collector number.
 
-
 ### Downloading Card Data
 - Run MTGD with the '-download' command flag. This will download the bulk data for all cards from the scryfall API.
 - The Scryfall Bulk data is not updated hourly. Please do not generate unnecesary traffic and only download the data when you must.
@@ -46,25 +51,58 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 - Run MTGD with the '-downloadimages' command flag. This will download the card images of cards in your collection.
 - I may find a more efficient method of implementing this that does not use scryfall in the future.
     - For now please try to limit how many images you query and how often in case this leads to significant strain on scryfall infrastructure.
+        - These requests are throttled in code to abide by good citizen policy.
+
+### Downloading Combo Data
+- Run MTGD with the '-downloadcombos' command flag. This will download the bulk combo database from commanderspellbook.
 
 ### Convert your Sheets into a Collection
 - Download your spreadsheets as Comma Sepperated Value(CSV) files and place them in the sheets directory.
 - Run MTGD with the '-collect' flag, a mycollection.json file will be generated. Theis collection contains cards which are an extension of the scryfall data format. The specific card data includes a number of owned copies in foil and nonfoil.
 
 
-### Do Something with your Collection File
-- Run MTGD with the '-load' flag. This will generate some stats. 
-- Run MTGD with the '-compile' flag. This will generate a more rich spreadsheet with the entire collection data.
-- More features will come with time.
+## Do Something with your Collection File
 
-### Convert your collection back into a spreadsheet
+### Load your collection
+- Loading your collection is a good test before using any other features.
+- Run MTGD with the '-load' flag. A bunch of information about your collection will be output to the console.
+
+### Convert your collection file back into a spreadsheet
 - You must have a mycollection.json file
 - Run MTGD with the '-showcreate' flag, a show_create_sheet.csv file will be generated
 
-### Run A Query on your collection
+### Compile your collection file to a human readable spreadsheet
+- You must have a mycollection.json file
+- Run MTGD with the '-compile' flag, a output_sheet.csv file will be generated
+- This sheet does not follow the input requirements, but is more human readable.
+
+### Run A Query on your collection (using Scryfall)
+- You must have a mycollection.json file
 - Use the '-q' flag followed by your query
 - NOTE: This is realy inefficient if your query is a HUGE subset, for example 't:creature', I will write custom logic for queries that are simple in the future that will speed up this operation.
 - NOTE: Queries which include special characters like '>' that redirect output are not currently handled
+
+### Find out what combos are in your collection (using CommanderSpellbook)
+- You must have a mycollection.json file 
+- You must have downloaded the combo data using '-downloadcombos'
+- Run MTGD with the '-combos' flag. You may want to redirect the output as it can be long. Ex. 'python3 MTGD.py -combos > mycombos.txt'
+
+### Find Combos in a filtered version of your collection (using Scryfall)
+- You must have a mycollection.json file 
+- You must have downloaded the combo data using '-downloadcombos'
+- Run MTGD with the '-qcw' flag followed by your query
+- NOTE: This is realy inefficient if your query is a HUGE subset, for example 't:creature', I will write custom logic for queries that are simple in the future that will speed up this operation.
+- NOTE: Queries which include special characters like '>' that redirect output are not currently handled
+- You may want to redirect the output as it can be long. Ex. 'python3 MTGD.py -qcw id:colorless > mycombos.txt'
+
+### Find Combos in your collection which includes some specific card (using Scryfall)
+- You must have a mycollection.json file 
+- You must have downloaded the combo data using '-downloadcombos'
+- Run MTGD with the '-qci' flag followed by your query
+- This is optimized for the query to be a very small set of cards, for ease of use when unsure of spelling for a card(or for using set and collector number)
+- NOTE: Queries which include special characters like '>' that redirect output are not currently handled
+- You may want to redirect the output as it can be long. Ex. 'python3 MTGD.py -qci Ashnod's Altar > mycombos.txt'
+
 
 ## Contact Us
 At this point in the project, please feel free to open an issue on github for non-serious matters. The example sheet from the '-help' dialogue also includes an email you are welcome to use.

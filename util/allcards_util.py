@@ -17,7 +17,6 @@ class allcards_util:
         #if data and AC directories dont exist we make them
         if not os.path.isdir('data'):
             os.mkdir('data')
-            os.mkdir('data/AC')
         if not os.path.isdir('data/AC'):
             os.mkdir('data/AC')
         #Download in chunks

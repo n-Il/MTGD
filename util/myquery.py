@@ -7,6 +7,7 @@ class myquery:
         self.collection = dict()
         self.response = None
         self.result_cards = []
+        self.result_len = -1
 
         #load collection
         self.load_collection(col)
@@ -17,7 +18,9 @@ class myquery:
 
         del self.collection
 
-        #request
+
+        ##request
+
         #self.q = q
         #rest are optional
         #self.unique = None
@@ -29,8 +32,10 @@ class myquery:
         #self.page = None
         #self.format = None
         #self.pretty = False
+
        
         ##response object error
+
         #self.object = None
         #self.code = None
         #self.details = None
@@ -38,8 +43,10 @@ class myquery:
         ##last 2 can be null or missing
         #self.warnings = None
         #self.type = None
-        #
+
+        
         ##response object list
+
         #self.object = None
         #self.has_more = None
         #self.data = None
@@ -65,17 +72,24 @@ class myquery:
             if "warnings" in response:
                 print("WARNINGS:",response["warnings"])
             self.response = response
+            self.result_len = response["total_cards"]
         else:
             print("ERROR:Unkown Response Object",r["object"])
 
 
     def page_and_filter(self):
+        results_counter = 0
+        digits = len(str(self.result_len))
+        print("Filtering:{}/{}".format(str(results_counter).zfill(digits),self.result_len),end="\r")
         while True:
             for card in self.response["data"]:
+                results_counter += 1
                 if card["name"] in self.collection:
                     #remove list from collection, add it to results cards
                     self.result_cards.extend(self.collection.pop(card["name"]))
+            print("Filtering:{}/{}".format(str(results_counter).zfill(digits),self.result_len),end="\r")
             if not self.response["has_more"]:
+                print()
                 break
             else: 
                 time.sleep(.2)

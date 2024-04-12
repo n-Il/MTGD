@@ -1,6 +1,7 @@
 import json
 import os
 from .sheets_util import sheets_util
+from .combos_util import combos_util
 import requests
 import time
 import sys
@@ -8,6 +9,12 @@ import sys
 class mycollection:
     def __init__(self):
         self.cards = []
+
+    def get_set_of_names(self):
+        result = set()
+        for card in self.cards:
+            result.add(card["name"])
+        return result
 
     def load_from_file(self,file = "mycollection.json"):
         if not os.path.exists(file):
@@ -353,3 +360,15 @@ class mycollection:
                 pass
                 #print("Skipping:",str(counter)+"/"+len_cards,"("+card["name"]+")")
         print()#move cursor to next line for progress
+
+    def get_combos(self):
+        combos = combos_util.get()
+        my_cards = self.get_set_of_names()
+        #remove combos not in collection
+        for reqs in list(combos.keys()):
+            if sum(map(lambda x: x in my_cards,reqs)) == len(reqs):
+                #print("has combo:",reqs)
+                pass
+            else:
+                combos.pop(reqs)
+        return combos
