@@ -4,6 +4,7 @@ MTGD is a collection managment software for Magic the Gathering.
 MTGD is implemented on Linux, and at this time it's probably not functional on Windows.
 
 MTGD uses and greatly appreciates the Scryfall API. 
+MTGD uses and greatly appreciates the Commander Spellbook API. 
 
 The future of MTGD is to provide many popular filtering and lookup operations based only on cards you own in paper. 
 
@@ -76,18 +77,18 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 - Run MTGD with the '-compile' flag, a output_sheet.csv file will be generated
 - This sheet does not follow the input requirements, but is more human readable.
 
-### Run A Query on your collection (using Scryfall)
+### Run A Query on your collection
 - You must have a mycollection.json file
 - Use the '-q' flag followed by your query
 - NOTE: This is realy inefficient if your query is a HUGE subset, for example 't:creature', I will write custom logic for queries that are simple in the future that will speed up this operation.
 - NOTE: Queries which include special characters like '>' that redirect output are not currently handled
 
-### Find out what combos are in your collection (using CommanderSpellbook)
+### Find out what combos are in your collection
 - You must have a mycollection.json file 
 - You must have downloaded the combo data using '-downloadcombos'
 - Run MTGD with the '-combos' flag. You may want to redirect the output as it can be long. Ex. 'python3 MTGD.py -combos > mycombos.txt'
 
-### Find Combos in a filtered version of your collection (using Scryfall)
+### Find Combos in a filtered version of your collection
 - You must have a mycollection.json file 
 - You must have downloaded the combo data using '-downloadcombos'
 - Run MTGD with the '-qcw' flag followed by your query
@@ -95,7 +96,7 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 - NOTE: Queries which include special characters like '>' that redirect output are not currently handled
 - You may want to redirect the output as it can be long. Ex. 'python3 MTGD.py -qcw id:colorless > mycombos.txt'
 
-### Find Combos in your collection which includes some specific card (using Scryfall)
+### Find Combos in your collection which includes some specific card
 - You must have a mycollection.json file 
 - You must have downloaded the combo data using '-downloadcombos'
 - Run MTGD with the '-qci' flag followed by your query
