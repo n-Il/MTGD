@@ -6,3 +6,5 @@ collections/*
 mycollection.json
 !sheets/EXAMPLE.csv
 show_create_sheet.csv
+output_sheet.csv
+result_sheet.csv
