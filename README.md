@@ -4,6 +4,7 @@ MTGD is a collection managment software for Magic the Gathering.
 MTGD is implemented on Linux, and at this time it's probably not functional on Windows.
 
 MTGD uses and greatly appreciates the Scryfall API. 
+
 MTGD uses and greatly appreciates the Commander Spellbook API. 
 
 The future of MTGD is to provide many popular filtering and lookup operations based only on cards you own in paper. 
