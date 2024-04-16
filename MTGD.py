@@ -31,7 +31,7 @@ def main():
 
     if '-download' in sys.argv:
         allcards_util.download()
-        sys.exit(0)
+        #sys.exit(0) speeds up cleanup but probably not great practice
 
     elif '-downloadimages' in sys.argv:
         collection.load_from_file()
@@ -293,8 +293,8 @@ def main():
         print("\t[-combos] loads your collection into memory, loads the combo database into memory, then outputs a description and required cards for each combo.")
         print("\t[-qci] Requires a Query. Use this option for finding combos within your collection which include a specific card found by the query.")
         print("\t[-qci] Requires a Query. Use this option to find combos where all cards are contained within a subset of your collection(which is filtered by the query).")
-        print("\t[-findcommanderdecks] WARNING_SLOW Download the 50 most recently created decks for each commander card in your collection"
-        print("\t[-testcommanderdecks] Using the stored decks, generates a commander_decks.csv file which can be used to find contained or mostly contained decks."
+        print("\t[-findcommanderdecks] WARNING_SLOW Download the 50 most recently created decks for each commander card in your collection")
+        print("\t[-testcommanderdecks] Using the stored decks, generates a commander_decks.csv file which can be used to find contained or mostly contained decks.")
     
     else:
         print("no arguments found, try '-help'")
