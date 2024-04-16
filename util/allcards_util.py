@@ -17,22 +17,22 @@ class allcards_util:
         #if data and AC directories dont exist we make them
         if not os.path.isdir('data'):
             os.mkdir('data')
-        if not os.path.isdir('data/AC'):
-            os.mkdir('data/AC')
+        if not os.path.isdir('data/allcards'):
+            os.mkdir('data/allcards')
         #Download in chunks
-        if os.path.exists("data/AC/all-cards-"+download_link.split('-')[-1]):
+        if os.path.exists("data/allcards/all-cards-"+download_link.split('-')[-1]):
             print("ERROR: You already have the latest all cards file.")
         else:
             chunk_size = 1024 * 1024 #1MB
             download = requests.get(download_link,stream=True)
-            with open("data/AC/all-cards-"+download_link.split('-')[-1],"wb") as f:
+            with open("data/allcards/all-cards-"+download_link.split('-')[-1],"wb") as f:
                 for chunk in download.iter_content(chunk_size=chunk_size):
                     if chunk:
                         f.write(chunk)
     
     @staticmethod
     def filtered_get(card_filter,debug = False):
-        list_of_files = list(map(lambda x: "data/AC/" + x,os.listdir("data/AC")))
+        list_of_files = list(map(lambda x: "data/allcards/" + x,os.listdir("data/allcards")))
         latest = max(list_of_files, key=os.path.getctime)
         cards = dict()
         num_lines = -2#first and last

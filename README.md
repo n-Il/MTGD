@@ -7,7 +7,7 @@ MTGD uses and greatly appreciates the Scryfall API.
 
 MTGD uses and greatly appreciates the Commander Spellbook API. 
 
-The future of MTGD is to provide many popular filtering and lookup operations based only on cards you own in paper. 
+MTGD uses and greatly appreciates the Archidekt API.
 
 ### Python3 Requirements
 requests
@@ -105,6 +105,15 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 - NOTE: Queries which include special characters like '>' that redirect output are not currently handled
 - You may want to redirect the output as it can be long. Ex. 'python3 MTGD.py -qci Ashnod's Altar > mycombos.txt'
 
+## Find EDH decks that you may be able to build
+- You must have a mycollection.json file
+- There are two arguments that are required for this. '-findcommanderdecks' and '-testcommanderdecks'
+- '-findcommanderdecks' uses the scryfall API and your collection to figure out which commanders are in you collection
+    - After these are determined, the Archidekt API is queried for the most recently created 50 decks for each commander and saving them to data/archidekt
+    - THIS WILL TAKE AN EXTREME AMOUNT OF TIME. MULTIPLE HOURS. If your collection is large enough, this may take multiple days.
+        - I am working on finding an alternative to some tooling used to accomplish this task so that this does not take as long, but for now it is necessary to minimize the density of traffic towards the archidekt API.
+- '-testcommanderdecks' reads in the downloaded decks and calculates the percent of each deck that is contained within your collection.
+    - A "commander_decks.csv" file is generated with this data and it is suggested that you put this into spreadsheet software to sort.
 
 ## Contact Us
 At this point in the project, please feel free to open an issue on github for non-serious matters. The example sheet from the '-help' dialogue also includes an email you are welcome to use.

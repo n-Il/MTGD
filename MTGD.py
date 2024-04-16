@@ -5,6 +5,7 @@ import json
 import os
 from util.allcards_util import allcards_util
 from util.sheets_util import sheets_util
+from util.archidekt_util import archidekt_util 
 from util.combos_util import combos_util
 from util.mycollection import mycollection
 from util.myquery import myquery
@@ -184,6 +185,96 @@ def main():
             print("Combos including the queried card(s):",len(combos))
             combos_util.pp(combos)
 
+    
+    
+    elif '-findcommanderdecks' in sys.argv:
+        print("WARNING: THIS WILL TAKE A LONG TIME")
+        print("Loading Collection")
+        collection.load_from_file()
+        print("Getting Commanders")
+        query = myquery(collection,"is:commander -is:digital")
+        del collection
+        results = query.result_cards
+        card_names = set()
+        for card in results:
+            card_names.add(card["name"])
+        digits = len(str(len(card_names)))
+        counter = 0
+        for card_name in card_names:
+            counter += 1
+            print("\n"+str(counter).zfill(digits)+"/"+str(len(card_names))+" Commander:",card_name)       
+            ids = archidekt_util.get_x_ids(card_name,50)
+            archidekt_util.download_decks(ids)
+        del results
+
+    elif '-testcommanderdecks' in sys.argv:
+        deck_link = "https://archidekt.com/decks/{}"
+        collection.load_from_file()
+        my_card_names = collection.get_names_and_counts()
+        del collection
+        with open("commander_decks.csv","w+") as f:
+            f.write("Commander,Link,%InCollection,%NonLandsInCollection,PriceMissing,PriceMissingNonLands\n")
+            list_of_deck_files = list(map(lambda x: "data/archidekt/" + x,os.listdir("data/archidekt")))
+            for deck_file in list_of_deck_files:
+                with open(deck_file) as f2:
+                    deck = json.load(f2)                   
+                    lands_cards_have = 0
+                    nonland_cards_have = 0
+                    total_nonlands = 0
+                    price_missing_lands = 0.0
+                    price_missing_nonlands = 0.0
+                    in_deck_categories = set()
+                    total_cards = 0#TODO DEBUGGING
+                    for cat in deck["categories"]:
+                        if cat["includedInDeck"]:
+                            in_deck_categories.add(cat["name"])
+                    for card in deck["cards"]:
+                        #check if in deck(versus maybeboard)
+                        if len(card["categories"]) == 0 or card["categories"][0] in in_deck_categories:#TODO make sure this works, empty categories appears to be assumed part of the deck
+                            total_cards += card["quantity"] #TODO DEBUGGING
+                            #check if we have this card(s)
+                            if card["card"]["oracleCard"]["name"] in my_card_names.keys():
+                                #check if we have the right number of them
+                                if card["quantity"] <= my_card_names[card["card"]["oracleCard"]["name"]]:
+                                    #check if land
+                                    if "Land" in card["card"]["oracleCard"]["types"]:
+                                        lands_cards_have += card["quantity"]
+                                    else:
+                                        nonland_cards_have += card["quantity"]
+                                        total_nonlands += card["quantity"]
+                                #we dont have some of them
+                                else:
+                                    #check if land
+                                    if "Land" in card["card"]["oracleCard"]["types"]:
+                                        lands_cards_have += my_card_names[card["card"]["oracleCard"]["name"]] 
+                                        price_missing_lands += card["card"]["prices"]["tcg"] * (card["quantity"] - my_card_names[card["card"]["oracleCard"]["name"]])
+                                    else:
+                                        nonland_cards_have += my_card_names[card["card"]["oracleCard"]["name"]] 
+                                        price_missing_nonlands += card["card"]["prices"]["tcg"] * (card["quantity"] - my_card_names[card["card"]["oracleCard"]["name"]])
+                                        total_nonlands += card["quantity"]
+                            #we dont have any
+                            else:
+                                if "Land" in card["card"]["oracleCard"]["types"]:
+                                    price_missing_lands += card["card"]["prices"]["tcg"] * card["quantity"]
+                                else:
+                                    price_missing_nonlands += card["card"]["prices"]["tcg"] * card["quantity"]
+                    #build the csv entry
+                    commander_name = archidekt_util.get_commander(deck)
+                    link = deck_link.format(deck["id"])
+                    percent_in_collection = (lands_cards_have + nonland_cards_have) /  100.0
+                    nonland_percent_in_collection = float(nonland_cards_have) / float(total_nonlands)
+                    price_missing_total = price_missing_lands + price_missing_nonlands
+                    csv = "\""+commander_name+"\","+link+","+str(percent_in_collection)+","+str(nonland_percent_in_collection)+","+str(price_missing_total)+","+str(price_missing_nonlands)+"\n"
+                    f.write(csv)
+                    if total_cards != 100:
+                        #TODO looks like the sideboard may be causing
+                        #TODO also is issue of prices for nonland cards not adding up , should be 0 for price nonland when nonland percent is 1
+                        print("ERROR:getting wrong number of cards(code mistake somewhere)")
+                        debug_total = 0
+                        for debug_card in deck["cards"]:
+                            debug_total += debug_card["quantity"]
+                        print(debug_total)
+                        print(link)
 
     elif '-help' in sys.argv:
         print("\tInput your collection using this spreadsheet:")
@@ -202,7 +293,9 @@ def main():
         print("\t[-combos] loads your collection into memory, loads the combo database into memory, then outputs a description and required cards for each combo.")
         print("\t[-qci] Requires a Query. Use this option for finding combos within your collection which include a specific card found by the query.")
         print("\t[-qci] Requires a Query. Use this option to find combos where all cards are contained within a subset of your collection(which is filtered by the query).")
-
+        print("\t[-findcommanderdecks] WARNING_SLOW Download the 50 most recently created decks for each commander card in your collection"
+        print("\t[-testcommanderdecks] Using the stored decks, generates a commander_decks.csv file which can be used to find contained or mostly contained decks."
+    
     else:
         print("no arguments found, try '-help'")
 

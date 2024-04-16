@@ -15,6 +15,15 @@ class mycollection:
         for card in self.cards:
             result.add(card["name"])
         return result
+    
+    def get_names_and_counts(self):
+        result = dict()
+        for card in self.cards:
+            if card["name"] in result:
+                result[card["name"]] += (card["MTGD_foil_count"] + card["MTGD_nonfoil_count"])
+            else:
+                result[card["name"]] = card["MTGD_foil_count"] + card["MTGD_nonfoil_count"]
+        return result
 
     def load_from_file(self,file = "mycollection.json"):
         if not os.path.exists(file):
@@ -66,7 +75,7 @@ class mycollection:
                 else:
                     if card["lang"] != "en":
                         if english_print_lookups[(card["set"],card["collector_number"])]["usd_foil"] != None:
-                            print("Using english price for",card["name"])
+                            print("Using english price for",card["name"]+". ["+card["set"]+","+card["collector_number"]+","+card["lang"]+"]")
                             price = float(english_print_lookups[(card["set"],card["collector_number"])]["usd_foil"])
                             if price >= 100:
                                 cards_over_100 += card["MTGD_foil_count"]
@@ -107,14 +116,9 @@ class mycollection:
                     if price >= 1:
                         sum_ignore_bulk += (price * card["MTGD_nonfoil_count"])
                 else:
-                    #errors += card["MTGD_nonfoil_count"]
-                    #if card["lang"] != "en":
-                    #    errors_nonenglish += card["MTGD_nonfoil_count"]
-                    #else:
-                    #    errors_english += card["MTGD_nonfoil_count"]
                     if card["lang"] != "en":
                         if english_print_lookups[(card["set"],card["collector_number"])]["usd"] != None:
-                            print("Using english price for",card["name"])
+                            print("Using english price for",card["name"]+". ["+card["set"]+","+card["collector_number"]+","+card["lang"]+"]")
                             price = float(english_print_lookups[(card["set"],card["collector_number"])]["usd"])
                             if price >= 100:
                                 cards_over_100 += card["MTGD_nonfoil_count"]
