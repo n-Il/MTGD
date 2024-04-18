@@ -246,10 +246,10 @@ def main():
                                 else:
                                     #check if land
                                     if "Land" in card["card"]["oracleCard"]["types"]:
-                                        lands_cards_have += my_card_names[card["card"]["oracleCard"]["name"]] 
+                                        lands_cards_have += my_card_names[card["card"]["oracleCard"]["name"]]
                                         price_missing_lands += card["card"]["prices"]["tcg"] * (card["quantity"] - my_card_names[card["card"]["oracleCard"]["name"]])
                                     else:
-                                        nonland_cards_have += my_card_names[card["card"]["oracleCard"]["name"]] 
+                                        nonland_cards_have += my_card_names[card["card"]["oracleCard"]["name"]]
                                         price_missing_nonlands += card["card"]["prices"]["tcg"] * (card["quantity"] - my_card_names[card["card"]["oracleCard"]["name"]])
                                         total_nonlands += card["quantity"]
                             #we dont have any
@@ -258,11 +258,13 @@ def main():
                                     price_missing_lands += card["card"]["prices"]["tcg"] * card["quantity"]
                                 else:
                                     price_missing_nonlands += card["card"]["prices"]["tcg"] * card["quantity"]
+                                    total_nonlands += card["quantity"]
                     #build the csv entry
-                    commander_name = archidekt_util.get_commander(deck)
+                    commander_name = deck["MTGD_Meta"]["MTGD_Commander"]
                     link = deck_link.format(deck["id"])
                     percent_in_collection = (lands_cards_have + nonland_cards_have) /  100.0
-                    nonland_percent_in_collection = float(nonland_cards_have) / float(total_nonlands)
+                    nonland_percent_in_collection = "="+str(nonland_cards_have)+"/" +str(total_nonlands)
+                    #nonland_percent_in_collection = float(nonland_cards_have) / float(total_nonlands)
                     price_missing_total = price_missing_lands + price_missing_nonlands
                     csv = "\""+commander_name+"\","+link+","+str(percent_in_collection)+","+str(nonland_percent_in_collection)+","+str(price_missing_total)+","+str(price_missing_nonlands)+"\n"
                     f.write(csv)

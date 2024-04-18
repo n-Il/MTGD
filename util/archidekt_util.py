@@ -9,13 +9,6 @@ class archidekt_util:
     #DECK_LINK = "https://www.archidekt.com/api/decks/{}/"
 
     @staticmethod
-    def get_commander(deck):
-        for card in deck["cards"]: 
-            if "Commander" in card["categories"]:
-                return card["card"]["oracleCard"]["name"]
-        return "ERROR"
-
-    @staticmethod
     def get_x_ids_helper(link):
         delay = 1
         failures = []
@@ -56,16 +49,20 @@ class archidekt_util:
         if archidekt_decks["count"] < x:
             print("WARNING: Archidekt does not have",str(x),"decks for",commander+". They have",archidekt_decks["count"])
             x = archidekt_decks["count"]
-        deck_ids = set()
+        deck_ids = dict()
         for deck in archidekt_decks["results"]:
-            deck_ids.add(deck["id"])  
+            deck_ids[deck["id"]] = dict()
+            deck_ids[deck["id"]]["MTGD_Commander"] = commander
+            deck_ids[deck["id"]]["MTGD_DeckCard"] = deck
         digits = len(str(x))
         print("Getting Deck IDs:{}/{}".format(str(len(deck_ids)).zfill(digits),x),end="\r")
         while archidekt_decks["next"] and len(deck_ids) < x:
             archidekt_decks = archidekt_util.get_x_ids_helper(archidekt_decks["next"])
             for deck in archidekt_decks["results"]:
                 if len(deck_ids) < x:
-                    deck_ids.add(deck["id"])  
+                    deck_ids[deck["id"]] = dict()
+                    deck_ids[deck["id"]]["MTGD_Commander"] = commander
+                    deck_ids[deck["id"]]["MTGD_DeckCard"] = deck
             print("Getting Deck IDs:{}/{}".format(str(len(deck_ids)).zfill(digits),x),end="\r")
         print()
         return deck_ids
@@ -105,12 +102,13 @@ class archidekt_util:
             os.mkdir('data/archidekt')
         digits = len(str(len(deck_ids)))
         counter = 0
-        for deck_id in deck_ids:
+        for deck_id in deck_ids.keys():
             counter += 1
             print("Downloading:{}/{}".format(str(counter).zfill(digits),len(deck_ids)),end="\r")
             if not os.path.exists('data/archidekt/'+str(deck_id)+".json"):
                 link = "https://www.archidekt.com/api/decks/{}/".format(deck_id)
                 deck_data = archidekt_util.download_decks_helper(link)
+                deck_data["MTGD_Meta"] = deck_ids[deck_id]
                 with open('data/archidekt/'+str(deck_id)+".json","w+") as f:
                     json.dump(deck_data,f)
         print()
