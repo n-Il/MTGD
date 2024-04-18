@@ -48,7 +48,7 @@ def main():
             print("ERROR:collection file exists")
         else:
             collection = sheets_util.get_collection()
-            with open("mycollection.json",'w') as f:
+            with open("mycollection.json",'w',encoding='utf-8') as f:
                 f.write("[\n")
                 i = 1
                 total = len(collection) 
@@ -212,11 +212,11 @@ def main():
         collection.load_from_file()
         my_card_names = collection.get_names_and_counts()
         del collection
-        with open("commander_decks.csv","w+") as f:
+        with open("commander_decks.csv","w+",encoding='utf-8') as f:
             f.write("Commander,Link,%InCollection,%NonLandsInCollection,PriceMissing,PriceMissingNonLands\n")
             list_of_deck_files = list(map(lambda x: "data/archidekt/" + x,os.listdir("data/archidekt")))
             for deck_file in list_of_deck_files:
-                with open(deck_file) as f2:
+                with open(deck_file,encoding='utf-8') as f2:
                     deck = json.load(f2)                   
                     lands_cards_have = 0
                     nonland_cards_have = 0
@@ -294,7 +294,7 @@ def main():
         print("\t[-q] loads your collection into memory, runs the query following -q, and creates result_sheet.csv with the overlapping cards.")
         print("\t[-combos] loads your collection into memory, loads the combo database into memory, then outputs a description and required cards for each combo.")
         print("\t[-qci] Requires a Query. Use this option for finding combos within your collection which include a specific card found by the query.")
-        print("\t[-qci] Requires a Query. Use this option to find combos where all cards are contained within a subset of your collection(which is filtered by the query).")
+        print("\t[-qcw] Requires a Query. Use this option to find combos where all cards are contained within a subset of your collection(which is filtered by the query).")
         print("\t[-findcommanderdecks] WARNING_SLOW Download the 50 most recently created decks for each commander card in your collection")
         print("\t[-testcommanderdecks] Using the stored decks, generates a commander_decks.csv file which can be used to find contained or mostly contained decks.")
     

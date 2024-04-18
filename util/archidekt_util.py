@@ -109,7 +109,7 @@ class archidekt_util:
                 link = "https://www.archidekt.com/api/decks/{}/".format(deck_id)
                 deck_data = archidekt_util.download_decks_helper(link)
                 deck_data["MTGD_Meta"] = deck_ids[deck_id]
-                with open('data/archidekt/'+str(deck_id)+".json","w+") as f:
+                with open('data/archidekt/'+str(deck_id)+".json","w+",encoding='utf-8') as f:
                     json.dump(deck_data,f)
         print()
 
@@ -124,7 +124,7 @@ class archidekt_util:
             link = "https://www.archidekt.com/api/decks/{}/".format(deck_id)
             time.sleep(2)
             deck_data = json.loads(requests.get(link).content)
-            with open('data/archidekt/'+str(deck_id)+".json","w+") as f:
+            with open('data/archidekt/'+str(deck_id)+".json","w+",encoding='utf-8') as f:
                 json.dump(deck_data,f)
 
     @staticmethod

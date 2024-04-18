@@ -16,7 +16,7 @@ class sheets_util:
         for sheet_file in sheet_files:
             if os.path.isfile(sheet_file) and sheet_file[-4:] == ".csv":
                 sheet = []
-                with open(sheet_file) as f:
+                with open(sheet_file,encoding='utf-8') as f:
                     for line in f.readlines()[1:]:
                         card = dict()
                         card_split = line.strip().split(',')
@@ -126,7 +126,7 @@ class sheets_util:
 
     @staticmethod
     def create_result_sheet(results):
-        with open("result_sheet.csv","w") as f:
+        with open("result_sheet.csv","w",encoding='utf-8') as f:
             f.write("Count,Name,Price,Set,CN,Foil,Lang,CMC\n")
             for card in results:
                 if card["MTGD_foil_count"] > 0:

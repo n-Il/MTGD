@@ -37,12 +37,12 @@ class allcards_util:
         cards = dict()
         num_lines = -2#first and last
         if debug:
-            with open(latest,"r") as f:
+            with open(latest,"r",encoding='utf-8') as f:
                 for line in f:
                     num_lines += 1
         num_lines = str(num_lines)
         len_num_lines = len(num_lines)
-        with open(latest) as f:
+        with open(latest,encoding='utf-8') as f:
             counter = 0
             for line in f:
                 line = line.strip()#remove the newlines

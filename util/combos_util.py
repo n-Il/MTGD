@@ -16,7 +16,7 @@ class combos_util:
         list_of_files = list(map(lambda x: "data/combos/" + x,os.listdir("data/combos"))) 
         latest = max(list_of_files,key=os.path.getctime)
         combos = dict()
-        with open(latest) as f:
+        with open(latest,encoding='utf-8') as f:
             combos_json = json.load(f) 
         for combo in combos_json["variants"]:
             required_cards = set()
@@ -33,10 +33,10 @@ class combos_util:
             os.mkdir('data/combos')
         API_LINK = "https://json.commanderspellbook.com/variants.json.gz"
         combos_data = json.loads(requests.get(API_LINK).content)
-        if os.path.exists("data/combos/combos-"+combos_data["timestamp"]+".json"):
+        if os.path.exists("data/combos/combos-"+combos_data["timestamp"].replace(':','_')+".json"):
             print("ERROR: You already have the latest combo data.")
         else:
-            with open("data/combos/combos-"+combos_data["timestamp"]+".json","w+") as f:
+            with open("data/combos/combos-"+combos_data["timestamp"].replace(':','_')+".json","w+",encoding='utf-8') as f:
                 json.dump(combos_data,f)
 
     @staticmethod
