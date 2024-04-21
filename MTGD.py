@@ -27,13 +27,12 @@ def card_lookup_cli():
 
 
 def main():
-    collection = mycollection()
-
     if '-download' in sys.argv:
         allcards_util.download()
         #sys.exit(0) speeds up cleanup but probably not great practice
 
     elif '-downloadimages' in sys.argv:
+        collection = mycollection()
         collection.load_from_file()
         collection.get_images()
 
@@ -44,6 +43,7 @@ def main():
         card_lookup_cli()
 
     elif '-collect' in sys.argv:
+        collection = mycollection()
         if os.path.exists("mycollection.json"):
             print("ERROR:collection file exists")
         else:
@@ -61,6 +61,7 @@ def main():
                 f.write("]")
 
     elif '-load' in sys.argv:
+        collection = mycollection()
         collection.load_from_file()
         print("\n******************************************")
         print("Unique Cards in Collection: "+str(len(collection.cards)))
@@ -87,14 +88,17 @@ def main():
         collection.topcards_info()
 
     elif '-compile' in sys.argv:
+        collection = mycollection()
         collection.load_from_file()
         collection.spit_out_sheet()
 
     elif '-showcreate' in sys.argv:
+        collection = mycollection()
         collection.load_from_file()
         collection.spit_out_create()
 
     elif '-q' in sys.argv:
+        collection = mycollection()
         i = sys.argv.index('-q')
         if len(sys.argv) < (i+2):
             print("ERROR:EMPTY QUERY")
@@ -108,15 +112,27 @@ def main():
             sheets_util.create_result_sheet(result)
     
     elif '-combos' in sys.argv:
+        collection = mycollection()
         collection.load_from_file()
         #combos is a dict wiht keys tuple of required cards and combo json value
         combos = collection.get_combos()
         print("Combos in Collection:",len(combos))
         #print more data
         combos_util.pp(combos)
+
+    elif '-comboforcegraph' in sys.argv:
+        collection = mycollection()
+        collection.load_from_file()
+        combos = collection.get_combos()
+        combos_util.force_graph2(combos)
+
+    elif '-combotesting' in sys.argv:
+        combos = combos_util.get()
+        combos_util.force_graph2(combos)
     
     #query combo includes
     elif '-qci' in sys.argv:
+        collection = mycollection()
         i = sys.argv.index('-qci')
         if len(sys.argv) < (i+2):
             print("ERROR:EMPTY QUERY")
@@ -153,6 +169,7 @@ def main():
 
     #query combo within
     elif '-qcw' in sys.argv:
+        collection = mycollection()
         i = sys.argv.index('-qcw')
         if len(sys.argv) < (i+2):
             print("ERROR:EMPTY QUERY")
@@ -188,6 +205,7 @@ def main():
     
     
     elif '-findcommanderdecks' in sys.argv:
+        collection = mycollection()
         print("WARNING: THIS WILL TAKE A LONG TIME")
         print("Loading Collection")
         collection.load_from_file()
@@ -208,6 +226,7 @@ def main():
         del results
 
     elif '-testcommanderdecks' in sys.argv:
+        collection = mycollection()
         deck_link = "https://archidekt.com/decks/{}"
         collection.load_from_file()
         my_card_names = collection.get_names_and_counts()
@@ -224,14 +243,12 @@ def main():
                     price_missing_lands = 0.0
                     price_missing_nonlands = 0.0
                     in_deck_categories = set()
-                    total_cards = 0#TODO DEBUGGING
                     for cat in deck["categories"]:
                         if cat["includedInDeck"]:
                             in_deck_categories.add(cat["name"])
                     for card in deck["cards"]:
                         #check if in deck(versus maybeboard)
-                        if len(card["categories"]) == 0 or card["categories"][0] in in_deck_categories:#TODO make sure this works, empty categories appears to be assumed part of the deck
-                            total_cards += card["quantity"] #TODO DEBUGGING
+                        if len(card["categories"]) == 0 or card["categories"][0] in in_deck_categories:
                             #check if we have this card(s)
                             if card["card"]["oracleCard"]["name"] in my_card_names.keys():
                                 #check if we have the right number of them
@@ -266,17 +283,8 @@ def main():
                     nonland_percent_in_collection = "="+str(nonland_cards_have)+"/" +str(total_nonlands)
                     #nonland_percent_in_collection = float(nonland_cards_have) / float(total_nonlands)
                     price_missing_total = price_missing_lands + price_missing_nonlands
-                    csv = "\""+commander_name+"\","+link+","+str(percent_in_collection)+","+str(nonland_percent_in_collection)+","+str(price_missing_total)+","+str(price_missing_nonlands)+"\n"
+                    csv = "\""+commander_name+"\",\""+link+"\","+str(percent_in_collection)+","+str(nonland_percent_in_collection)+","+str(price_missing_total)+","+str(price_missing_nonlands)+"\n"
                     f.write(csv)
-                    if total_cards != 100:
-                        #TODO looks like the sideboard may be causing
-                        #TODO also is issue of prices for nonland cards not adding up , should be 0 for price nonland when nonland percent is 1
-                        print("ERROR:getting wrong number of cards(code mistake somewhere)")
-                        debug_total = 0
-                        for debug_card in deck["cards"]:
-                            debug_total += debug_card["quantity"]
-                        print(debug_total)
-                        print(link)
 
     elif '-help' in sys.argv:
         print("\tInput your collection using this spreadsheet:")
@@ -295,6 +303,7 @@ def main():
         print("\t[-combos] loads your collection into memory, loads the combo database into memory, then outputs a description and required cards for each combo.")
         print("\t[-qci] Requires a Query. Use this option for finding combos within your collection which include a specific card found by the query.")
         print("\t[-qcw] Requires a Query. Use this option to find combos where all cards are contained within a subset of your collection(which is filtered by the query).")
+        print("\t[-comboforcegraph] Generates a 3d force graph with the combos from your collection. Creates 3d_force_graph_combos.html. The file equires ./util/3d-force-graph/3d-force-graph.js")
         print("\t[-findcommanderdecks] WARNING_SLOW Download the 50 most recently created decks for each commander card in your collection")
         print("\t[-testcommanderdecks] Using the stored decks, generates a commander_decks.csv file which can be used to find contained or mostly contained decks.")
     

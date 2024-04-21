@@ -9,6 +9,8 @@ MTGD uses and greatly appreciates the Commander Spellbook API.
 
 MTGD uses and greatly appreciates the Archidekt API.
 
+MTGD uses and greatly appreciates the 3D Force-Directed Graph web component developed by vasturiano at https://github.com/vasturiano/3d-force-graph
+
 ### Python3 Requirements
 requests
 json
@@ -104,6 +106,15 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 - This is optimized for the query to be a very small set of cards, for ease of use when unsure of spelling for a card(or for using set and collector number)
 - NOTE: Queries which include special characters like '>' that redirect output are not currently handled
 - You may want to redirect the output as it can be long. Ex. 'python3 MTGD.py -qci Ashnod's Altar > mycombos.txt'
+
+## Generate a 3d Force Graph of combos within your collection
+- You must have a mycollection.json file 
+- You must have downloaded the combo data using '-downloadcombos'
+- Run MTGD with the '-comboforcegraph' flag
+- This will generate a "3d_force_graph_combos.html" file that you may open with a modern browser.
+- The html file expects to find the 3d-force-graph.js file at ./util/3d-force-graph/3d-force-graph.js . If you move the html file you will need to account for this change.
+- Hovering your mouse over a node will show either the card or the combo cards.
+- Clicking your mouse over a node will open a link to the combo or a search of the card on the commander spellbook website.
 
 ## Find EDH decks that you may be able to build
 - You must have a mycollection.json file
