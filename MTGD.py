@@ -33,8 +33,8 @@ def main():
 
     elif '-downloadimages' in sys.argv:
         collection = mycollection()
-        collection.load_from_file()
-        collection.get_images()
+        if collection.load_from_file():
+            collection.get_images()
 
     elif '-downloadcombos' in sys.argv:
         combos_util.download()
@@ -62,40 +62,40 @@ def main():
 
     elif '-load' in sys.argv:
         collection = mycollection()
-        collection.load_from_file()
-        print("\n******************************************")
-        print("Unique Cards in Collection: "+str(len(collection.cards)))
-        print("Total Cards in Collection: "+str(collection.count_cards()))
-        
-        #price
-        print("\n******************************************")
-        collection.price_info()
-        
-        #foils vs nonfoils
-        print("\n******************************************")
-        collection.foil_info()
-        
-        #sets sorted
-        print("\n******************************************")
-        collection.set_info()
+        if collection.load_from_file():
+            print("\n******************************************")
+            print("Unique Cards in Collection: "+str(len(collection.cards)))
+            print("Total Cards in Collection: "+str(collection.count_cards()))
+            
+            #price
+            print("\n******************************************")
+            collection.price_info()
+            
+            #foils vs nonfoils
+            print("\n******************************************")
+            collection.foil_info()
+            
+            #sets sorted
+            print("\n******************************************")
+            collection.set_info()
 
-        #rarities
-        print("\n******************************************")
-        collection.rarity_info()
+            #rarities
+            print("\n******************************************")
+            collection.rarity_info()
 
-        #top cards by count
-        print("\n******************************************")
-        collection.topcards_info()
+            #top cards by count
+            print("\n******************************************")
+            collection.topcards_info()
 
     elif '-compile' in sys.argv:
         collection = mycollection()
-        collection.load_from_file()
-        collection.spit_out_sheet()
+        if collection.load_from_file():
+            collection.spit_out_sheet()
 
     elif '-showcreate' in sys.argv:
         collection = mycollection()
-        collection.load_from_file()
-        collection.spit_out_create()
+        if collection.load_from_file():
+            collection.spit_out_create()
 
     elif '-q' in sys.argv:
         collection = mycollection()
@@ -105,30 +105,36 @@ def main():
         else:
             q = " ".join(sys.argv[i+1:])
             print("Your Query:["+q+"]")
-            collection.load_from_file()
-            query = myquery(collection,q)
-            del collection#try and allow python to free some memory
-            result = query.result_cards
-            sheets_util.create_result_sheet(result)
+            if collection.load_from_file():
+                query = myquery(collection,q)
+                del collection#try and allow python to free some memory
+                result = query.result_cards
+                if len(result) < 25:
+                    for card in result:
+                        print((card["MTGD_foil_count"]+card["MTGD_nonfoil_count"]),card["name"])
+                sheets_util.create_result_sheet(result)
     
     elif '-combos' in sys.argv:
         collection = mycollection()
-        collection.load_from_file()
-        #combos is a dict wiht keys tuple of required cards and combo json value
-        combos = collection.get_combos()
-        print("Combos in Collection:",len(combos))
-        #print more data
-        combos_util.pp(combos)
+        if collection.load_from_file():
+            #combos is a dict wiht keys tuple of required cards and combo json value
+            combos = collection.get_combos()
+            if combos:
+                print("Combos in Collection:",len(combos))
+                #print more data
+                combos_util.pp(combos)
 
     elif '-comboforcegraph' in sys.argv:
         collection = mycollection()
-        collection.load_from_file()
-        combos = collection.get_combos()
-        combos_util.force_graph2(combos)
+        if collection.load_from_file():
+            combos = collection.get_combos()
+            if combos:
+                combos_util.force_graph2(combos)
 
     elif '-combotesting' in sys.argv:
         combos = combos_util.get()
-        combos_util.force_graph2(combos)
+        if combos:
+            combos_util.force_graph2(combos)
     
     #query combo includes
     elif '-qci' in sys.argv:
@@ -139,33 +145,33 @@ def main():
         else:
             q = " ".join(sys.argv[i+1:])
             print("Your Query:["+q+"]")
-            collection.load_from_file()
-            combos = collection.get_combos()#dict of k,v is reqcards,combojson
-            query = myquery(collection,q)
-            del collection#try and allow python to free some memory
-            results = query.result_cards#list of scryfall card objects
-            set_results = set()
-            #convert scryfall card objects to set of names
-            if len(results) > 100:
-                print("qci is intended for checking which combos include a single card from your collection, there are",len(result_cards),"cards you are checking")
-            elif len(results) < 1:
-                print("No results to query")
-                return
-            else:
-                print("Results to query:",len(results))
-            for card in results:
-                set_results.add(card["name"])
-            #filter combos
-            for reqs in list(combos.keys()):
-                #if any of the cards in reqs
-                if sum(map(lambda x: x in reqs,set_results)) > 0:
-                    pass
-                    #print("has combo")
+            if collection.load_from_file():
+                combos = collection.get_combos()#dict of k,v is reqcards,combojson
+                query = myquery(collection,q)
+                del collection#try and allow python to free some memory
+                results = query.result_cards#list of scryfall card objects
+                set_results = set()
+                #convert scryfall card objects to set of names
+                if len(results) > 100:
+                    print("qci is intended for checking which combos include a single card from your collection, there are",len(result_cards),"cards you are checking")
+                elif len(results) < 1:
+                    print("No results to query")
+                    return
                 else:
-                    combos.pop(reqs)
-            #print combos
-            print("Combos including the queried card(s):",len(combos))
-            combos_util.pp(combos)
+                    print("Results to query:",len(results))
+                for card in results:
+                    set_results.add(card["name"])
+                #filter combos
+                for reqs in list(combos.keys()):
+                    #if any of the cards in reqs
+                    if sum(map(lambda x: x in reqs,set_results)) > 0:
+                        pass
+                        #print("has combo")
+                    else:
+                        combos.pop(reqs)
+                #print combos
+                print("Combos including the queried card(s):",len(combos))
+                combos_util.pp(combos)
 
     #query combo within
     elif '-qcw' in sys.argv:
@@ -176,115 +182,124 @@ def main():
         else:
             q = " ".join(sys.argv[i+1:])
             print("Your Query:["+q+"]")
-            collection.load_from_file()
-            combos = collection.get_combos()#dict of k,v is reqcards,combojson
-            query = myquery(collection,q)
-            del collection#try and allow python to free some memory
-            results = query.result_cards#list of scryfall card objects
-            set_results = set()
-            #convert scryfall card objects to set of names
-            if len(results) < 1:
-                print("No results to query")
-                return
-            else:
-                print("Results to query:",len(results))
-            for card in results:
-                set_results.add(card["name"])
-            #filter combos
-            for reqs in list(combos.keys()):
-                #if any of the cards in reqs
-                if sum(map(lambda x: x in set_results,reqs)) == len(reqs):
-                    pass
-                    #print("has combo")
+            if collection.load_from_file():
+                combos = collection.get_combos()#dict of k,v is reqcards,combojson
+                query = myquery(collection,q)
+                del collection#try and allow python to free some memory
+                results = query.result_cards#list of scryfall card objects
+                set_results = set()
+                #convert scryfall card objects to set of names
+                if len(results) < 1:
+                    print("No results to query")
+                    return
                 else:
-                    combos.pop(reqs)
-            #print combos
-            print("Combos including the queried card(s):",len(combos))
-            combos_util.pp(combos)
+                    print("Results to query:",len(results))
+                for card in results:
+                    set_results.add(card["name"])
+                #filter combos
+                for reqs in list(combos.keys()):
+                    #if any of the cards in reqs
+                    if sum(map(lambda x: x in set_results,reqs)) == len(reqs):
+                        pass
+                        #print("has combo")
+                    else:
+                        combos.pop(reqs)
+                #print combos
+                print("Combos including the queried card(s):",len(combos))
+                combos_util.pp(combos)
 
-    
-    
     elif '-findcommanderdecks' in sys.argv:
         collection = mycollection()
         print("WARNING: THIS WILL TAKE A LONG TIME")
         print("Loading Collection")
-        collection.load_from_file()
-        print("Getting Commanders")
-        query = myquery(collection,"is:commander -is:digital")
-        del collection
-        results = query.result_cards
-        card_names = set()
-        for card in results:
-            card_names.add(card["name"])
-        digits = len(str(len(card_names)))
-        counter = 0
-        for card_name in card_names:
-            counter += 1
-            print("\n"+str(counter).zfill(digits)+"/"+str(len(card_names))+" Commander:",card_name)       
-            ids = archidekt_util.get_x_ids(card_name,50)
-            archidekt_util.download_decks(ids)
-        del results
+        if collection.load_from_file():
+            print("Getting Commanders")
+            query = myquery(collection,"is:commander -is:digital")
+            del collection
+            results = query.result_cards
+            card_names = set()
+            for card in results:
+                card_names.add(card["name"])
+            if len(card_names) == 0:
+                print("ERROR: No Commanders found in collection")
+            else:
+                digits = len(str(len(card_names)))
+                counter = 0
+                for card_name in card_names:
+                    counter += 1
+                    print("\n"+str(counter).zfill(digits)+"/"+str(len(card_names))+" Commander:",card_name)       
+                    ids = archidekt_util.get_x_ids(card_name,50)
+                    archidekt_util.download_decks(ids)
+                del results
 
     elif '-testcommanderdecks' in sys.argv:
-        collection = mycollection()
-        deck_link = "https://archidekt.com/decks/{}"
-        collection.load_from_file()
-        my_card_names = collection.get_names_and_counts()
-        del collection
-        with open("commander_decks.csv","w+",encoding='utf-8') as f:
-            f.write("Commander,Link,%InCollection,%NonLandsInCollection,PriceMissing,PriceMissingNonLands\n")
-            list_of_deck_files = list(map(lambda x: "data/archidekt/" + x,os.listdir("data/archidekt")))
-            for deck_file in list_of_deck_files:
-                with open(deck_file,encoding='utf-8') as f2:
-                    deck = json.load(f2)                   
-                    lands_cards_have = 0
-                    nonland_cards_have = 0
-                    total_nonlands = 0
-                    price_missing_lands = 0.0
-                    price_missing_nonlands = 0.0
-                    in_deck_categories = set()
-                    for cat in deck["categories"]:
-                        if cat["includedInDeck"]:
-                            in_deck_categories.add(cat["name"])
-                    for card in deck["cards"]:
-                        #check if in deck(versus maybeboard)
-                        if len(card["categories"]) == 0 or card["categories"][0] in in_deck_categories:
-                            #check if we have this card(s)
-                            if card["card"]["oracleCard"]["name"] in my_card_names.keys():
-                                #check if we have the right number of them
-                                if card["quantity"] <= my_card_names[card["card"]["oracleCard"]["name"]]:
-                                    #check if land
-                                    if "Land" in card["card"]["oracleCard"]["types"]:
-                                        lands_cards_have += card["quantity"]
+        if not os.path.isdir('data'):
+            print("ERROR: missing data folder")
+        elif not os.path.isdir('data/archidekt/'):
+            print("ERROR: missing data/archidekt folder.(Run -findcommanderdecks)")
+        elif len(os.listdir("data/archidekt")) == 0:
+            print("ERROR: no decks in data/archidekt, Do you have no viable commanders in your collection?")
+        else:
+            list_of_files = list(map(lambda x: "data/combos/" + x,os.listdir("data/combos"))) 
+            collection = mycollection()
+            deck_link = "https://archidekt.com/decks/{}"
+            if collection.load_from_file():
+                my_card_names = collection.get_names_and_counts()
+                del collection
+                with open("commander_decks.csv","w+",encoding='utf-8') as f:
+                    f.write("Commander,Link,%InCollection,%NonLandsInCollection,PriceMissing,PriceMissingNonLands\n")
+                    list_of_deck_files = list(map(lambda x: "data/archidekt/" + x,os.listdir("data/archidekt")))
+                    for deck_file in list_of_deck_files:
+                        with open(deck_file,encoding='utf-8') as f2:
+                            deck = json.load(f2)                   
+                            lands_cards_have = 0
+                            nonland_cards_have = 0
+                            total_nonlands = 0
+                            price_missing_lands = 0.0
+                            price_missing_nonlands = 0.0
+                            in_deck_categories = set()
+                            for cat in deck["categories"]:
+                                if cat["includedInDeck"]:
+                                    in_deck_categories.add(cat["name"])
+                            for card in deck["cards"]:
+                                #check if in deck(versus maybeboard)
+                                if len(card["categories"]) == 0 or card["categories"][0] in in_deck_categories:
+                                    #check if we have this card(s)
+                                    if card["card"]["oracleCard"]["name"] in my_card_names.keys():
+                                        #check if we have the right number of them
+                                        if card["quantity"] <= my_card_names[card["card"]["oracleCard"]["name"]]:
+                                            #check if land
+                                            if "Land" in card["card"]["oracleCard"]["types"]:
+                                                lands_cards_have += card["quantity"]
+                                            else:
+                                                nonland_cards_have += card["quantity"]
+                                                total_nonlands += card["quantity"]
+                                        #we dont have some of them
+                                        else:
+                                            #check if land
+                                            if "Land" in card["card"]["oracleCard"]["types"]:
+                                                lands_cards_have += my_card_names[card["card"]["oracleCard"]["name"]]
+                                                price_missing_lands += card["card"]["prices"]["tcg"] * (card["quantity"] - my_card_names[card["card"]["oracleCard"]["name"]])
+                                            else:
+                                                nonland_cards_have += my_card_names[card["card"]["oracleCard"]["name"]]
+                                                price_missing_nonlands += card["card"]["prices"]["tcg"] * (card["quantity"] - my_card_names[card["card"]["oracleCard"]["name"]])
+                                                total_nonlands += card["quantity"]
+                                    #we dont have any
                                     else:
-                                        nonland_cards_have += card["quantity"]
-                                        total_nonlands += card["quantity"]
-                                #we dont have some of them
-                                else:
-                                    #check if land
-                                    if "Land" in card["card"]["oracleCard"]["types"]:
-                                        lands_cards_have += my_card_names[card["card"]["oracleCard"]["name"]]
-                                        price_missing_lands += card["card"]["prices"]["tcg"] * (card["quantity"] - my_card_names[card["card"]["oracleCard"]["name"]])
-                                    else:
-                                        nonland_cards_have += my_card_names[card["card"]["oracleCard"]["name"]]
-                                        price_missing_nonlands += card["card"]["prices"]["tcg"] * (card["quantity"] - my_card_names[card["card"]["oracleCard"]["name"]])
-                                        total_nonlands += card["quantity"]
-                            #we dont have any
-                            else:
-                                if "Land" in card["card"]["oracleCard"]["types"]:
-                                    price_missing_lands += card["card"]["prices"]["tcg"] * card["quantity"]
-                                else:
-                                    price_missing_nonlands += card["card"]["prices"]["tcg"] * card["quantity"]
-                                    total_nonlands += card["quantity"]
-                    #build the csv entry
-                    commander_name = deck["MTGD_Meta"]["MTGD_Commander"]
-                    link = deck_link.format(deck["id"])
-                    percent_in_collection = (lands_cards_have + nonland_cards_have) /  100.0
-                    nonland_percent_in_collection = "="+str(nonland_cards_have)+"/" +str(total_nonlands)
-                    #nonland_percent_in_collection = float(nonland_cards_have) / float(total_nonlands)
-                    price_missing_total = price_missing_lands + price_missing_nonlands
-                    csv = "\""+commander_name+"\",\""+link+"\","+str(percent_in_collection)+","+str(nonland_percent_in_collection)+","+str(price_missing_total)+","+str(price_missing_nonlands)+"\n"
-                    f.write(csv)
+                                        if "Land" in card["card"]["oracleCard"]["types"]:
+                                            price_missing_lands += card["card"]["prices"]["tcg"] * card["quantity"]
+                                        else:
+                                            price_missing_nonlands += card["card"]["prices"]["tcg"] * card["quantity"]
+                                            total_nonlands += card["quantity"]
+                            #build the csv entry
+                            commander_name = deck["MTGD_Meta"]["MTGD_Commander"]
+                            link = deck_link.format(deck["id"])
+                            percent_in_collection = (lands_cards_have + nonland_cards_have) /  100.0
+                            nonland_percent_in_collection = "="+str(nonland_cards_have)+"/" +str(total_nonlands)
+                            #nonland_percent_in_collection = float(nonland_cards_have) / float(total_nonlands)
+                            price_missing_total = price_missing_lands + price_missing_nonlands
+                            csv = "\""+commander_name+"\",\""+link+"\","+str(percent_in_collection)+","+str(nonland_percent_in_collection)+","+str(price_missing_total)+","+str(price_missing_nonlands)+"\n"
+                            f.write(csv)
 
     elif '-help' in sys.argv:
         print("\tInput your collection using this spreadsheet:")

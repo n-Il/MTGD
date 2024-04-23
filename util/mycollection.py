@@ -28,9 +28,11 @@ class mycollection:
     def load_from_file(self,file = "mycollection.json"):
         if not os.path.exists(file):
             print("ERROR:"+str(file),"doesn't exist, please run '-collect'")
+            return False
         else:
             with open(file,encoding='utf-8') as f:
                 self.cards = json.load(f)
+                return True
 
     def count_cards(self):
         sum = 0
@@ -367,12 +369,13 @@ class mycollection:
 
     def get_combos(self):
         combos = combos_util.get()
-        my_cards = self.get_set_of_names()
-        #remove combos not in collection
-        for reqs in list(combos.keys()):
-            if sum(map(lambda x: x in my_cards,reqs)) == len(reqs):
-                #print("has combo:",reqs)
-                pass
-            else:
-                combos.pop(reqs)
-        return combos
+        if combos:
+            my_cards = self.get_set_of_names()
+            #remove combos not in collection
+            for reqs in list(combos.keys()):
+                if sum(map(lambda x: x in my_cards,reqs)) == len(reqs):
+                    #print("has combo:",reqs)
+                    pass
+                else:
+                    combos.pop(reqs)
+            return combos

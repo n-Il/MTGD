@@ -12,8 +12,17 @@ class combos_util:
    
     @staticmethod
     def get():
+        if not os.path.isdir('data'):
+            print("ERROR: missing data folder")
+            return None
+        elif not os.path.isdir('data/combos/'):
+            print("ERROR: missing data/combos folder.(Run -downloadcombos)")
+            return None
         #read into dict as key=requiredcards,value=combo
         list_of_files = list(map(lambda x: "data/combos/" + x,os.listdir("data/combos"))) 
+        if len(list_of_files) == 0:
+            print("ERROR: missing combo data.(Run -downloadcombos)")
+            return None
         latest = max(list_of_files,key=os.path.getctime)
         combos = dict()
         with open(latest,encoding='utf-8') as f:

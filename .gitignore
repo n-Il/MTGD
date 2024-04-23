@@ -2,6 +2,8 @@ sheets/*
 data/*
 __pycache__/*
 util/__pycache__/*
+util/3d-force-graph/__pycache__/*
+util/parse_datatypes/__pycache__/*
 collections/*
 mycollection.json
 !sheets/EXAMPLE.csv
