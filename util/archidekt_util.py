@@ -10,29 +10,28 @@ class archidekt_util:
 
     @staticmethod
     def get_x_ids_helper(link):
-        delay = 1
+        delay = 5
         failures = []
         while True:
             time.sleep(delay)
             response = requests.get(link)
-            print("STATUS:",response.status_code)
             if response.status_code == 429:
-                print("Too Many Requests")
+                print("\nToo Many Requests")
                 sys.exit(0)
             if response.status_code != 200:
                 failures.append(response.status_code)
                 if len(failures) >= 5:
-                    print("ERROR:5 Failures:",failures)
+                    print("\nERROR:5 Failures:",failures)
                     sys.exit(0)
                 else:
                     continue
             try:
                 json_data = json.loads(response.content)
             except json.decoder.JSONDecodeError as e:
-                print("ERROR: JSON read error,"+str(e))
+                print("\nERROR: JSON read error,"+str(e))
                 continue
             if json_data["results"] == [] and json_data["count"] != 0:
-                print("ERROR: Empty Data. Retrying")
+                print("\nERROR: Empty Data. Retrying")
                 continue
             return json_data
             

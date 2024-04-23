@@ -123,8 +123,10 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
     - After these are determined, the Archidekt API is queried for the most recently created 50 decks for each commander and saving them to data/archidekt
     - THIS WILL TAKE AN EXTREME AMOUNT OF TIME. MULTIPLE HOURS. If your collection is large enough, this may take multiple days.
         - I am working on finding an alternative to some tooling used to accomplish this task so that this does not take as long, but for now it is necessary to minimize the density of traffic towards the archidekt API.
+    - follow the '-findcommanderdecks' with a case sensitive commander name and it will download ALL the decks for that commander
 - '-testcommanderdecks' reads in the downloaded decks and calculates the percent of each deck that is contained within your collection.
     - A "commander_decks.csv" file is generated with this data and it is suggested that you put this into spreadsheet software to sort.
+    - follow the '-testcommanderdecks' with a case sensitive commander name and it will only check downloaded decks for that commander
 
 ## Contact Us
 At this point in the project, please feel free to open an issue on github for non-serious matters. The example sheet from the '-help' dialogue also includes an email you are welcome to use.
