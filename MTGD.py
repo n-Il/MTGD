@@ -78,6 +78,13 @@ def load():
         print("\n******************************************")
         collection.topcards_info()
 
+def price_testing():
+    collection = mycollection()
+    if collection.load_from_file():
+        #price
+        print("\n******************************************")
+        collection.get_price_info()
+
 def dash_compile():
     collection = mycollection()
     if collection.load_from_file():
@@ -100,10 +107,22 @@ def q():
             query = myquery(collection,q)
             del collection#try and allow python to free some memory
             result = query.result_cards
+            if len(result) == 0:
+                print("ERROR: No Cards Found")
+                return
             if len(result) < 25:
                 for card in result:
                     print((card["MTGD_foil_count"]+card["MTGD_nonfoil_count"]),card["name"])
             sheets_util.create_result_sheet(result)
+            #create results.js
+            with open("results.js","w+") as f:
+                f.write("var results = [\n")
+                for card in result:
+                    if card["MTGD_foil_count"] > 0 or card["MTGD_nonfoil_count"] > 0:
+                        image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
+                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\"],\n")
+                f.write("];\n")
+ 
 
 def combos():
     collection = mycollection()
@@ -140,6 +159,9 @@ def querycombosincludes():
             query = myquery(collection,q)
             del collection#try and allow python to free some memory
             results = query.result_cards#list of scryfall card objects
+            if len(results) == 0:
+                print("ERROR: No Cards Found")
+                return
             set_results = set()
             #convert scryfall card objects to set of names
             if len(results) > 100:
@@ -176,6 +198,9 @@ def querycomboswithin():
             query = myquery(collection,q)
             del collection#try and allow python to free some memory
             results = query.result_cards#list of scryfall card objects
+            if len(results) == 0:
+                print("ERROR: No Cards Found")
+                return
             set_results = set()
             #convert scryfall card objects to set of names
             if len(results) < 1:
@@ -232,11 +257,10 @@ def findcommanderdecks():
 
 
 def testcommanderdecks_helper(deck,my_cards):
-    lands_cards_have = 0
-    nonland_cards_have = 0
-    total_nonlands = 0
-    price_missing_lands = 0.0
-    price_missing_nonlands = 0.0
+    missing_lands = 0
+    missing_nonlands = 0
+    price_missing_lands = 0 
+    price_missing_nonlands = 0
     in_deck_categories = set()
     for cat in deck["categories"]:
         if cat["includedInDeck"] and (cat["name"]!="Sideboard"):
@@ -248,20 +272,15 @@ def testcommanderdecks_helper(deck,my_cards):
             have = min(card["quantity"],in_collection)
             have_not = card["quantity"] - have
             if "Land" in card["card"]["oracleCard"]["types"]:
-                lands_cards_have += have
+                missing_lands += have_not
                 price_missing_lands += (have_not * card["card"]["prices"]["tcg"])
             else:
-                total_nonlands+= card["quantity"]
-                nonland_cards_have += have
+                missing_nonlands += have_not
                 price_missing_nonlands += (have_not * card["card"]["prices"]["tcg"])
     #build the csv entry
     commander_name = deck["MTGD_Meta"]["MTGD_Commander"]
     link = "https://archidekt.com/decks/{}".format(deck["id"])
-    percent_in_collection = (lands_cards_have + nonland_cards_have) /  100.0
-    nonland_percent_in_collection = "="+str(nonland_cards_have)+"/" +str(total_nonlands)
-    #nonland_percent_in_collection = float(nonland_cards_have) / float(total_nonlands)
-    price_missing_total = price_missing_lands + price_missing_nonlands
-    csv = "\""+commander_name+"\",\""+link+"\","+str(percent_in_collection)+","+str(nonland_percent_in_collection)+","+str(price_missing_total)+","+str(price_missing_nonlands)+"\n"
+    csv = "\""+commander_name+"\",\""+link+"\","+str((missing_lands+missing_nonlands))+","+str(missing_lands)+","+str(missing_nonlands)+",$"+str((price_missing_lands+price_missing_nonlands))+",$"+str(price_missing_lands)+",$"+str(price_missing_nonlands)+"\n"
     return csv
 
 def testcommanderdecks():
@@ -284,7 +303,7 @@ def testcommanderdecks():
             my_cards = collection.get_names_and_counts()
             del collection
             with open("commander_decks.csv","w+",encoding='utf-8') as f:
-                f.write("Commander,Link,%InCollection,%NonLandsInCollection,PriceMissing,PriceMissingNonLands\n")
+                f.write("Commander,Link,Missing,MissingLands,MissingNonLands,PriceMissingCards,PriceMissingLands,PriceMissingNonLands\n")
                 list_of_deck_files = list(map(lambda x: "data/archidekt/" + x,os.listdir("data/archidekt")))
                 for deck_file in list_of_deck_files:
                     with open(deck_file,encoding='utf-8') as f2:
@@ -352,7 +371,6 @@ def main():
         help_text()
     else:
         print("no arguments found, try '-help'")
-
     
 if __name__ == "__main__":
     start_time = time.time()

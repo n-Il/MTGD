@@ -13,7 +13,7 @@ MTGD uses and greatly appreciates the 3D Force-Directed Graph web component deve
 
 ### Python3 Requirements
 requests
-json
+matplotlib
 
 ## How To: Use MTGD
 

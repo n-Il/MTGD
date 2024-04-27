@@ -82,6 +82,8 @@ class myquery:
         digits = len(str(self.result_len))
         print("Filtering:{}/{}".format(str(results_counter).zfill(digits),self.result_len),end="\r")
         while True:
+            if not self.response:
+                return
             for card in self.response["data"]:
                 results_counter += 1
                 if card["name"] in self.collection:

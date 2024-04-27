@@ -5,6 +5,7 @@ from .combos_util import combos_util
 import requests
 import time
 import sys
+import copy
 
 class mycollection:
     def __init__(self):
@@ -40,10 +41,9 @@ class mycollection:
             sum+=card["MTGD_foil_count"]
             sum+=card["MTGD_nonfoil_count"]
         return sum
-
+    
     #price
     def price_info(self):
-
         english_print_lookups = dict()
         for card in self.cards:
             if "MTGD_extra" in card:
