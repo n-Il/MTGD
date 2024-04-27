@@ -4,8 +4,6 @@ from .sheets_util import sheets_util
 from .combos_util import combos_util
 import requests
 import time
-import sys
-import copy
 
 class mycollection:
     def __init__(self):

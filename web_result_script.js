@@ -1,5 +1,4 @@
 //results = [...
-//let fiftyImages = document.querySelector(".results");
 let fiftyImages= document.getElementById("results");
 fiftyImages.style['padding-left'] = '20%';
 fiftyImages.style['padding-right'] = '20%';

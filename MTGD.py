@@ -78,13 +78,6 @@ def load():
         print("\n******************************************")
         collection.topcards_info()
 
-def price_testing():
-    collection = mycollection()
-    if collection.load_from_file():
-        #price
-        print("\n******************************************")
-        collection.get_price_info()
-
 def dash_compile():
     collection = mycollection()
     if collection.load_from_file():

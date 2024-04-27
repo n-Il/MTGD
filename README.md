@@ -13,7 +13,6 @@ MTGD uses and greatly appreciates the 3D Force-Directed Graph web component deve
 
 ### Python3 Requirements
 requests
-matplotlib
 
 ## How To: Use MTGD
 
@@ -85,6 +84,7 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 - Use the '-q' flag followed by your query
 - NOTE: This is realy inefficient if your query is a HUGE subset, for example 't:creature', I will write custom logic for queries that are simple in the future that will speed up this operation.
 - NOTE: Queries which include special characters like '>' that redirect output are not currently handled
+- A very basic webpage is included for reading through these results more similarly to scryfall, Simply open web_results_page.html with a modern browser.
 
 ### Find out what combos are in your collection
 - You must have a mycollection.json file 
