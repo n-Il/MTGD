@@ -350,7 +350,6 @@ class mycollection:
                         #download front image as normal
                         with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png", "wb") as f:
                             f.write(requests.get(card["card_faces"][0]["image_uris"]["png"]).content)
-
                             time.sleep(0.2)#200 milliseconds
                         #download back image with back
                         with open("data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+"back.png", "wb") as f:

@@ -2,7 +2,7 @@ import requests
 from .mycollection import mycollection
 import time
 class myquery:
-    def __init__(self,col,q,**kwargs):
+    def __init__(self,col,q,inverse = False):
         self.q = q
         self.collection = dict()
         self.response = None
@@ -14,7 +14,10 @@ class myquery:
         #run query
         self.get()
         #filter by collection 
-        self.page_and_filter()
+        if inverse:
+            self.page_and_filter_inverse()
+        else:
+            self.page_and_filter()
 
         del self.collection
 
@@ -76,6 +79,27 @@ class myquery:
         else:
             print("ERROR:Unkown Response Object",r["object"])
 
+    def page_and_filter_inverse(self):
+        results_counter = 0
+        digits = len(str(self.result_len))
+        print("Filtering:{}/{}".format(str(results_counter).zfill(digits),self.result_len),end="\r")
+        while True:
+            if not self.response:
+                return
+            for card in self.response["data"]:
+                results_counter += 1
+                if card["name"] not in self.collection:
+                    #TODO might need to fudge the MTGD_... values in case i assume they exist anywhere beyond here
+                    card["MTGD_foil_count"] = 0
+                    card["MTGD_nonfoil_count"] = 0
+                    self.result_cards.append(card)
+            print("Filtering:{}/{}".format(str(results_counter).zfill(digits),self.result_len),end="\r")
+            if not self.response["has_more"]:
+                print()
+                break
+            else: 
+                time.sleep(.2)
+                self.response = requests.get(self.response["next_page"]).json()
 
     def page_and_filter(self):
         results_counter = 0
@@ -96,4 +120,3 @@ class myquery:
             else: 
                 time.sleep(.2)
                 self.response = requests.get(self.response["next_page"]).json()
-

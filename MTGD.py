@@ -88,16 +88,16 @@ def showcreate():
     if collection.load_from_file():
         collection.spit_out_create()
 
-def q():
+def q(inverse = False):
     collection = mycollection()
-    i = sys.argv.index('-q')
+    i = sys.argv.index('-q') if not inverse else sys.argv.index('-iq')
     if len(sys.argv) < (i+2):
         print("ERROR:EMPTY QUERY")
     else:
         q = " ".join(sys.argv[i+1:])
         print("Your Query:["+q+"]")
         if collection.load_from_file():
-            query = myquery(collection,q)
+            query = myquery(collection,q,inverse)
             del collection#try and allow python to free some memory
             result = query.result_cards
             if len(result) == 0:
@@ -106,14 +106,21 @@ def q():
             if len(result) < 25:
                 for card in result:
                     print((card["MTGD_foil_count"]+card["MTGD_nonfoil_count"]),card["name"])
-            sheets_util.create_result_sheet(result)
+            if inverse:
+                sheets_util.create_inverse_result_sheet(result)
+            else:
+                sheets_util.create_result_sheet(result)
             #create results.js
-            with open("results.js","w+") as f:
+            with open("results.js","w+",encoding='utf-8') as f:
                 f.write("var results = [\n")
                 for card in result:
-                    if card["MTGD_foil_count"] > 0 or card["MTGD_nonfoil_count"] > 0:
+                    if inverse:
                         image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
                         f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\"],\n")
+                    else:
+                        if card["MTGD_foil_count"] > 0 or card["MTGD_nonfoil_count"] > 0:
+                            image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
+                            f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\"],\n")
                 f.write("];\n")
  
 
@@ -314,12 +321,14 @@ def help_text():
     print("\t[-lookup] lets you test set/cn combinations against scryfall's english entries.(unoptimized).")
     print("\t[-download] downloads the latest scryfall data(~2GB) to your computer.")
     print("\t[-downloadimages] downloads the card images for cards in your collection to your computer.")
+    print("\t[-downloadinverseimages] downloads the card images for cards in result_sheet.csv, assuming you used the -iq flag to build it.")
     print("\t[-downloadcombos] downloads a combo database from commander spellbook to your computer")
     print("\t[-collect] converts the sheets you created to a local collection file with scryfall data.")
     print("\t[-compile] converts the local collection file into a spreadsheet with card names among other fields.")
     print("\t[-load] loads your collection into memory and provides some simple stats.")
     print("\t[-showcreate] loads your collection into memory and creates a spreadsheet that can be used to create it")
     print("\t[-q] loads your collection into memory, runs the query following -q, and creates result_sheet.csv with the overlapping cards.")
+    print("\t[-iq] loads your collection into memory, runs the query following -q, and creates result_sheet.csv with the cards not in your collection.")
     print("\t[-combos] loads your collection into memory, loads the combo database into memory, then outputs a description and required cards for each combo.")
     print("\t[-qci] Requires a Query. Use this option for finding combos within your collection which include a specific card found by the query.")
     print("\t[-qcw] Requires a Query. Use this option to find combos where all cards are contained within a subset of your collection(which is filtered by the query).")
@@ -334,6 +343,8 @@ def main():
         downloadimages()
     elif '-downloadcombos' in sys.argv:
         combos_util.download()
+    elif '-downloadinverseimages' in sys.argv:
+        sheets_util.get_inverse_sheet_images()
     elif '-lookup' in sys.argv:
         card_lookup_cli()
     elif '-collect' in sys.argv:
@@ -346,6 +357,8 @@ def main():
         showcreate()
     elif '-q' in sys.argv:
         q()
+    elif '-iq' in sys.argv:
+        q(True)
     elif '-combos' in sys.argv:
         combos()
     elif '-comboforcegraph' in sys.argv:

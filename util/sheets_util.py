@@ -2,6 +2,7 @@ import sys
 import requests
 import json
 import os
+import time
 from .allcards_util import allcards_util
 
 class sheets_util:
@@ -125,6 +126,70 @@ class sheets_util:
                 return card_lang.upper() 
 
     @staticmethod
+    def create_inverse_result_sheet(results):
+        with open("result_sheet.csv","w",encoding='utf-8') as f:
+            f.write("Count,Name,Price,Set,CN,Foil,Lang,CMC,ILINK\n")
+            for card in results:
+                line = ""
+                #count
+                line += "0,"
+                #name
+                line += card["name"].replace(",","")+","
+                #price
+                line += (str(card["prices"]["usd"]) if card["prices"]["usd"] else "ERROR") + ","
+                #set
+                line += card["set"] + ","
+                #cn
+                line += card["collector_number"] + ","
+                #foil
+                line += ","
+                #lang
+                line += card["lang"] + ","
+                #CMC
+                line += str(card["cmc"]) + ","
+                #Image Link
+                #multifaced card
+                if "image_uris" not in card.keys() and "card_faces" in card.keys():
+                    if len(card["card_faces"]) > 2:
+                        print("\nERROR:Found a card with more than 2 faces, I dont even....\n")
+                    else:
+                        #write front normally, put back on it's own line just for simplicity of my code
+                        line += str(card["card_faces"][0]["image_uris"]["png"]) + "\n"
+                        #write the second one on it's own line
+                        line += ",,,"+card["set"]+","+card["collector_number"]+",,"+card["lang"]+"back,,"+card["card_faces"][1]["image_uris"]["png"]+"\n" 
+                #only one face
+                else:
+                    line += str(card["image_uris"]["png"]) + "\n"
+                f.write(line)
+
+    @staticmethod
+    def get_inverse_sheet_images():
+        if not os.path.isdir('data'):
+            os.mkdir('data')
+        if not os.path.exists("data/images"):
+            os.mkdir("data/images")
+        to_download = []
+        with open("result_sheet.csv",encoding='utf-8') as f:
+            lines = f.read().split("\n")
+            len_cards = str(len(lines) - 2)
+            digits_len_cards = len(len_cards)
+            counter = 0
+            if lines[0].split(',')[-1] != "ILINK":
+                print("\nERROR: You probably didn't generate this result_sheet using the -id flag, use -downloadimages instead")
+                return
+            for line in lines[1:-1]:
+                counter += 1
+                print("Downloading",str(counter).zfill(digits_len_cards)+"/"+len_cards,end='\r')
+                split_line = line.split(",")
+                if not os.path.exists("data/images/"+split_line[3]):
+                    os.mkdir("data/images/"+split_line[3])
+                if not os.path.exists("data/images/"+split_line[3]+"/"+split_line[4]+"_"+split_line[6]+".png"):
+                    with open("data/images/"+split_line[3]+"/"+split_line[4]+"_"+split_line[6]+".png", "wb") as bf: 
+                        bf.write(requests.get(",".join(split_line[8:])).content)   
+                        time.sleep(0.2)
+            print()
+
+    @staticmethod
     def create_result_sheet(results):
         with open("result_sheet.csv","w",encoding='utf-8') as f:
             f.write("Count,Name,Price,Set,CN,Foil,Lang,CMC\n")
@@ -167,5 +232,3 @@ class sheets_util:
                     #CMC
                     line += str(card["cmc"]) + "\n"
                     f.write(line)
-
-
