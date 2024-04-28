@@ -328,7 +328,7 @@ def help_text():
     print("\t[-load] loads your collection into memory and provides some simple stats.")
     print("\t[-showcreate] loads your collection into memory and creates a spreadsheet that can be used to create it")
     print("\t[-q] loads your collection into memory, runs the query following -q, and creates result_sheet.csv with the overlapping cards.")
-    print("\t[-iq] loads your collection into memory, runs the query following -q, and creates result_sheet.csv with the cards not in your collection.")
+    print("\t[-iq] loads your collection into memory, runs the query following -iq, and creates result_sheet.csv with the cards not in your collection.")
     print("\t[-combos] loads your collection into memory, loads the combo database into memory, then outputs a description and required cards for each combo.")
     print("\t[-qci] Requires a Query. Use this option for finding combos within your collection which include a specific card found by the query.")
     print("\t[-qcw] Requires a Query. Use this option to find combos where all cards are contained within a subset of your collection(which is filtered by the query).")
