@@ -37,7 +37,7 @@ for (var i = 0; i < prevClass.length;i++){
             resultStartIndex -= 50;
             resultEndIndex = resultStartIndex+50
             document.getElementById("bounds").innerText = resultStartIndex.toString() + "-" + resultEndIndex.toString() +" of "+ results.length.toString();
-            let resultsChildren = Array.from(document.getElementById("results").children);
+            lookupResults.forEach((e)=>e.src="");
             for (let i = resultStartIndex; i < resultEndIndex;i++){
                 lookupResults[i%50].src = results[i][0];
                 lookupResults[i%50].removeEventListener("click",lookupResults[i%50].onClick)
@@ -60,6 +60,7 @@ for (var i = 0; i < nextClass.length;i++){
                 resultEndIndex = results.length
             }
             document.getElementById("bounds").innerText = resultStartIndex.toString() + "-" + resultEndIndex.toString() +" of "+ results.length.toString();
+            lookupResults.forEach((e)=>e.src="");
             for (let i = resultStartIndex; i < resultEndIndex;i++){
                 lookupResults[i%50].src = results[i][0];
                 lookupResults[i%50].removeEventListener("click",lookupResults[i%50].onClick)
