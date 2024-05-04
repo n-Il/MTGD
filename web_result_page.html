@@ -1,22 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="UTF-8">
-<title>Page Title</title>
+<title>MTGD Results</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="">
+<link rel="stylesheet" href="web_result_style.css">
 <style>
 </style>
 <body>
-<p id="bounds"></p>
-<button class="prev" type="button">Prev</button>
-<button class="next" type="button">Next</button>
-<button class="reload" type="button">Reload</button>
-<button class="next" type="button" style="float:right">Next</button>
+<div>
+    <span id = "bounds" ></span>
+    <span id = "total"> </span>
+    <span id = "query"></span>
+</div>
+<div class = "dropdown">
+    <button onclick="dropDownFunction(event)" class="dropdownbutton">50 Per Page</button>
+    <div id="subdropdown" class="dropdowncontent">
+        <div onclick="setPageSize(this)" class="pagesize" >-1</div>
+        <div onclick="setPageSize(this)" class="pagesize" >-1</div>
+        <div onclick="setPageSize(this)" class="pagesize" >-1</div>
+    </div>
+</div>
+<button class="prev" onclick="prev()" type="button">Prev</button>
+<button class="next" onclick="next()" type="button">Next</button>
+<button class="reload" onclick="reload()" type="button">Reload</button>
+<button class="next" onclick="next()" type="button" style="float:right">Next</button>
 <div id="results"></div>
-<button class="prev" type="button">Prev</button>
-<button class="next" type="button">Next</button>
-<button class="reload" type="button">Reload</button>
-<button class="next" type="button" style="float:right">Next</button>
+<button class="prev" onclick="prev()" type="button">Prev</button>
+<button class="next" onclick="next()" type="button">Next</button>
+<button class="reload" onclick="reload()" type="button">Reload</button>
+<button class="next" onclick="next()" type="button" style="float:right">Next</button>
 <!--<img id="test" src="143_en.png" alt="testing" style="height:3in">-->
 <script src="results.js"></script>
 <script src="web_result_script.js"></script>

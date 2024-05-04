@@ -82,10 +82,16 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
 ### Run A Query on your collection
 - You must have a mycollection.json file
 - Use the '-q' flag followed by your query
+- the '-q' flag outputs a results_sheet.csv file 
 - NOTE: This is realy inefficient if your query is a HUGE subset, for example 't:creature', I will write custom logic for queries that are simple in the future that will speed up this operation.
 - NOTE: Queries which include special characters like '>' that redirect output are not currently handled
 - A very basic webpage is included for reading through these results more similarly to scryfall, Simply open web_results_page.html with a modern browser.
+
+### Run A Query on cards not in your collection
 - the '-iq' flag works the same way as '-q', but instead of cards in your collection, it gets cards not in your collection.
+- the '-iq' flag outputs a butchered form of the normal results_sheet.csv, it was designed to be used with the web tooling, but should still be good enough to look through with your eyes.
+- the '-downloadinverseimages' flag will read through this results_sheet.csv and download images for the web tooling.
+- A very basic webpage is included for reading through these results more similarly to scryfall, Simply open web_results_page.html with a modern browser.
 
 ### Find out what combos are in your collection
 - You must have a mycollection.json file 

@@ -112,6 +112,9 @@ def q(inverse = False):
                 sheets_util.create_result_sheet(result)
             #create results.js
             with open("results.js","w+",encoding='utf-8') as f:
+                f.write("var query = \""+str(q)+"\";")
+                f.write("var collectionUnique = \""+str(query.unique_collection_cards)+"\";")
+                f.write("var scryfallTotalResults = \""+str(query.result_len)+"\";")
                 f.write("var results = [\n")
                 for card in result:
                     if inverse:

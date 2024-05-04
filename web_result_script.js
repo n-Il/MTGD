@@ -1,72 +1,106 @@
-//results = [...
-let fiftyImages= document.getElementById("results");
-fiftyImages.style['padding-left'] = '20%';
-fiftyImages.style['padding-right'] = '20%';
-let docFrag = document.createDocumentFragment();
-docFrag.id = "results";
-lookupResults = [];
-for (let i = 0; i < Math.min(50,results.length);i++){
-    let image = document.createElement('img');
-    image.src = results[i][0];
-    image.style['cursor'] = "pointer";
-    image.onClick = function(){window.open(results[i][1]),"_blank"};
-    image.addEventListener("click",image.onClick)
-    image.style['width']  = '20%';
-    lookupResults[i] = image;
-    docFrag.appendChild(image);
+//this code creates all the variables we use
+var pageSize = 50;
+var resultStartIndex = 0;
+var resultEndIndex = Math.min(pageSize,results.length);
+//this code sets up the text at the top
+document.getElementById("query").innerText = "using query: " + query;
+document.getElementById("total").innerText = "collected("+collectionUnique+" Unique). Filtered from "+scryfallTotalResults+" total results from Scryfall ";
+//setup the drop down text options
+updatePageSizes();
+//setup the drop down on-clicks
+setupDropDownClicks();
+//create the initial images
+setupImages(resultStartIndex,resultEndIndex);
+//set the initial bounds text
+updateBounds();
+
+/****************************************/
+/****************************************/
+/****************************************/
+
+function updateBounds(){
+    document.getElementById("bounds").innerText = resultStartIndex.toString() + "-" + resultEndIndex.toString() +" of "+ results.length.toString();
 }
-fiftyImages.appendChild(docFrag);
-resultStartIndex = 0;
-resultEndIndex = Math.min(50,results.length);
-document.getElementById("bounds").innerText = resultStartIndex.toString() + "-" + resultEndIndex.toString() +" of "+ results.length.toString();
-let prevClass = document.getElementsByClassName("prev");
-let nextClass = document.getElementsByClassName("next");
-let reloadClass = document.getElementsByClassName("reload");
-for (var i = 0; i < reloadClass.length;i++){
-    reloadClass[i].addEventListener("click",function(){
-        document.body.scrollTop = document.documentElement.scrollTop = 0;
-        //console.log("reload"); this gets eaten
-        location.reload();
-});}
 
-for (var i = 0; i < prevClass.length;i++){
-    prevClass[i].addEventListener("click",function(){
-        document.body.scrollTop = document.documentElement.scrollTop = 0;
-        console.log("prev");
-        if (resultStartIndex != 0){
-            resultStartIndex -= 50;
-            resultEndIndex = resultStartIndex+50
-            document.getElementById("bounds").innerText = resultStartIndex.toString() + "-" + resultEndIndex.toString() +" of "+ results.length.toString();
-            lookupResults.forEach((e)=>e.src="");
-            for (let i = resultStartIndex; i < resultEndIndex;i++){
-                lookupResults[i%50].src = results[i][0];
-                lookupResults[i%50].removeEventListener("click",lookupResults[i%50].onClick)
-                lookupResults[i%50].onClick = function(){window.open(results[i][1]),"_blank"};
-                lookupResults[i%50].addEventListener("click",lookupResults[i%50].onClick)
-            }
+function reload(){
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+    location.reload();
+}
 
+//this is called by the pageSize buttons within the drop-down and they send themselves
+function setPageSize(button){
+    pageSize = Number(button.innerText);
+    updatePageSizes();
+    resultEndIndex = Math.min(resultStartIndex+pageSize,results.length);
+    updateBounds();
+    setupImages(resultStartIndex,resultEndIndex);
+}
+
+function updatePageSizes(){
+    var pageSizeNumbers = [15,25,50,100];//dont change the number of pageSizeNumbers
+    var pageSizes = document.getElementsByClassName("pagesize");
+    var pscounter = 0;
+    for (var i = 0; i < 4; i++){
+        if (pageSizeNumbers[i] != pageSize){
+            pageSizes[pscounter].innerText = pageSizeNumbers[i];     
+            pscounter += 1;
         }
-});}
-for (var i = 0; i < nextClass.length;i++){
-    nextClass[i].addEventListener("click",function(){
-        document.body.scrollTop = document.documentElement.scrollTop = 0;
-        console.log("next");
-        //I DONT FEEL LIKE WRITING THE ERROR HANDLING OR CHECKING FOR THE TOP HALF BUT IT MUST BE DONE
-        if ((resultStartIndex+50) < results.length){
-            resultStartIndex += 50;
-            if ((results.length) > (resultEndIndex+50)){
-                resultEndIndex += 50;
-            }else{
-                resultEndIndex = results.length
-            }
-            document.getElementById("bounds").innerText = resultStartIndex.toString() + "-" + resultEndIndex.toString() +" of "+ results.length.toString();
-            lookupResults.forEach((e)=>e.src="");
-            for (let i = resultStartIndex; i < resultEndIndex;i++){
-                lookupResults[i%50].src = results[i][0];
-                lookupResults[i%50].removeEventListener("click",lookupResults[i%50].onClick)
-                lookupResults[i%50].onClick = function(){window.open(results[i][1]),"_blank"};
-                lookupResults[i%50].addEventListener("click",lookupResults[i%50].onClick)
+    }
+    Array.from(document.getElementsByClassName("dropdownbutton")).forEach(inst=>inst.innerText = pageSize+" Per Page");
+}
+
+function dropDownFunction(){
+    document.getElementById("subdropdown").classList.toggle("show");
+}
+
+function setupDropDownClicks(){
+    window.onclick = function(event){
+        if (!event.target.matches('.dropdownbutton')){
+            var dropdowns = document.getElementsByClassName("dropdowncontent");
+            for (var i = 0; i< dropdowns.length; i++){
+                var openDropDown = dropdowns[i];
+                if (openDropDown.classList.contains('show')){
+                    openDropDown.classList.remove('show');
+                }
             }
         }
-});}
+    }
+}
 
+function setupImages(start,end){
+    var resultImages = document.getElementById("results");
+    resultImages.innerHTML = '';
+    for (var i = start; i < end;i++){
+        var image = document.createElement('img');
+        image.src = results[i][0];
+        image.style['cursor'] = "pointer";
+        image.style['width']  = '20%';
+        image.onClick = function(){window.open(results[i][1]),"_blank"};
+        image.addEventListener("click",image.onClick);
+        resultImages.appendChild(image);
+    }
+}
+
+function prev(){
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+    if (resultStartIndex != 0){
+        resultStartIndex -= pageSize;
+        resultEndIndex = resultStartIndex+pageSize
+        updateBounds();
+        setupImages(resultStartIndex,resultEndIndex);
+    }
+}
+
+function next(){
+    document.body.scrollTop = document.documentElement.scrollTop = 0;
+    if ((resultStartIndex+pageSize) < results.length){
+        resultStartIndex += pageSize;
+        if ((results.length) > (resultEndIndex+pageSize)){
+            resultEndIndex += pageSize;
+        }else{
+            resultEndIndex = results.length
+        }
+        updateBounds();
+        setupImages(resultStartIndex,resultEndIndex);
+    }
+}

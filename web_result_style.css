@@ -1,0 +1,40 @@
+.dropdownbutton{
+    cursor: pointer;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdowncontent{
+    display:none;
+    position:absolute;
+    box-shadow:0px 8px 16px 0px rgba(0,0.0,0.2);
+    z-index:1;
+}
+
+
+.show{
+    display:block;
+}
+
+.pagesize{
+    cursor: pointer;
+    display:block;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+.pagesize:hover {
+    background-color: #FF0000;
+}
+/*
+.dropdownbutton:focus{
+    background-color: #0000FF;
+}
+*/
+
+#results{
+    padding-left:20%;
+    padding-right:20%;
+}

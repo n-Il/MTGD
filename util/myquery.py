@@ -20,7 +20,11 @@ class myquery:
             self.page_and_filter()
 
         del self.collection
-
+        card_names = set()
+        for card in self.result_cards:
+            card_names.add(card["name"])
+        self.unique_collection_cards = len(card_names);
+        del card_names
 
         ##request
 
@@ -66,7 +70,6 @@ class myquery:
                 self.collection[card["name"]] = [card]
     
     def get(self):
-        card_names = {}
         r = requests.get("https://api.scryfall.com/cards/search",params={"q":self.q})
         response = r.json()
         if response["object"] == "error":
