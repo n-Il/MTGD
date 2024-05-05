@@ -13,10 +13,33 @@ setupDropDownClicks();
 setupImages(resultStartIndex,resultEndIndex);
 //set the initial bounds text
 updateBounds();
+//setup skip box handler
+document.getElementById("skipbox").addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        skip();
+    }
+});
 
 /****************************************/
 /****************************************/
 /****************************************/
+
+function skip(){
+    skipTo = document.getElementById("skipbox");
+    skipToValue = skipTo.value;
+    skipTo.value = '';
+    if (skipToValue){
+        resultStartIndex = Math.max(Math.min(results.length,skipToValue),0);
+        resultEndIndex = Math.min(resultStartIndex+pageSize,results.length);
+        updateBounds();
+        setupImages(resultStartIndex,resultEndIndex);
+    }else{
+        resultStartIndex = 0;
+        resultEndIndex = Math.min(pageSize,results.length);
+        updateBounds();
+        setupImages(resultStartIndex,resultEndIndex);
+    }
+}
 
 function updateBounds(){
     document.getElementById("bounds").innerText = resultStartIndex.toString() + "-" + resultEndIndex.toString() +" of "+ results.length.toString();
@@ -82,9 +105,14 @@ function setupImages(start,end){
 
 function prev(){
     document.body.scrollTop = document.documentElement.scrollTop = 0;
-    if (resultStartIndex != 0){
+    if (resultStartIndex >= pageSize){
         resultStartIndex -= pageSize;
-        resultEndIndex = resultStartIndex+pageSize
+        resultEndIndex = Math.min(resultStartIndex+pageSize,results.length);
+        updateBounds();
+        setupImages(resultStartIndex,resultEndIndex);
+    }else{
+        resultStartIndex = 0;
+        resultEndIndex = Math.min(resultStartIndex+pageSize,results.length);
         updateBounds();
         setupImages(resultStartIndex,resultEndIndex);
     }
