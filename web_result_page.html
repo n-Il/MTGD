@@ -7,24 +7,38 @@
 <style>
 </style>
 <body>
-<div>
-    <span id = "bounds" ></span>
-    <span id = "total"> </span>
+   
+
+<div class="info-icon">ⓘ
+    <span id = "bounds"></span>
+    <span id = "total"></span>
     <span id = "query"></span>
 </div>
-<div class = "dropdown">
-    <button onclick="dropDownFunction(event)" class="dropdownbutton">50 Per Page</button>
-    <div id="subdropdown" class="dropdowncontent">
-        <div onclick="setPageSize(this)" class="pagesize" >-1</div>
-        <div onclick="setPageSize(this)" class="pagesize" >-1</div>
-        <div onclick="setPageSize(this)" class="pagesize" >-1</div>
+
+
+<nav class="nav-bar">
+    <div class="nav-btns">
+        <button class="prev" onclick="prev()" type="button">Prev</button>
+        <button class="next" onclick="next()" type="button">Next</button>
+        <div>
+            <button class="reload" onclick="reload()" type="button">Reload</button>   
+        </div>
     </div>
-</div>
-<button class="prev" onclick="prev()" type="button">Prev</button>
-<button class="next" onclick="next()" type="button">Next</button>
-<button class="reload" onclick="reload()" type="button">Reload</button>
-<input id="skipbox" type="number" placeholder="Skip To">
-<button class="next" onclick="next()" type="button" style="float:right">Next</button>
+    
+    <div class="nav-dropdown"> 
+        <div>
+            <input id="skipbox" type="number" placeholder="Skip To">
+        </div>
+        <button onclick="dropDownFunction(event)" class="dropdownbutton">50 Per Page</button>
+        <div class = "dropdown"></div>
+        <div id="subdropdown" class="dropdowncontent">
+            <div onclick="setPageSize(this)" class="pagesize" >-1</div>
+            <div onclick="setPageSize(this)" class="pagesize" >-1</div>
+            <div onclick="setPageSize(this)" class="pagesize" >-1</div>
+        </div>
+    </div>
+</nav>
+
 <div id="results"></div>
 <button class="prev" onclick="prev()" type="button">Prev</button>
 <button class="next" onclick="next()" type="button">Next</button>
