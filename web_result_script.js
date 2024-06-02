@@ -2,6 +2,7 @@
 let pageSize = 50;
 let resultStartIndex = 0;
 let resultEndIndex = Math.min(pageSize,results.length);
+let infoIcon = document.querySelector(".info-icon");
 //this code sets up the text at the top
 document.getElementById("query").innerText = "using query: " + query;
 document.getElementById("total").innerText = "collected("+collectionUnique+" Unique). Filtered from "+scryfallTotalResults+" total results from Scryfall ";
@@ -131,3 +132,31 @@ function next(){
         setupImages(resultStartIndex,resultEndIndex);
     }
 }
+
+
+
+
+window.onload=function() {
+
+    infoIcon.addEventListener('mouseout', hideToolTip);
+    infoIcon.addEventListener('mouseover', showToolTip);
+    
+    function hideToolTip () {
+        const queryToolTip = document.getElementById('query');
+        queryToolTip.style.display ='none';
+        const totalToolTip = document.getElementById('total');
+        totalToolTip.style.display ='none';
+    }
+
+    function showToolTip () {
+        const queryToolTip = document.getElementById('query');
+        queryToolTip.style.display = 'inline';
+        const totalToolTip = document.getElementById('total');
+        totalToolTip.style.display = 'inline';
+    }
+
+
+  }
+
+
+
