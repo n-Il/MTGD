@@ -157,6 +157,3 @@ window.onload=function() {
 
 
   }
-
-
-

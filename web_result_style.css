@@ -8,6 +8,10 @@
     font-family:'Times New Roman', Times, serif
 }
 
+.info-icon{
+    cursor: help;
+}
+
 
 button {
     color: gray;
