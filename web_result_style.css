@@ -2,11 +2,9 @@
     display: flex;
     justify-content: space-between;
     border-bottom-style: solid;
-    border-bottom-width: 1px;
+    border-bottom-width: 0.1em;
     border-bottom-color: gray;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    padding-bottom: 30px;
+    margin-bottom: 1em;
     font-family:'Times New Roman', Times, serif
 }
 
@@ -18,7 +16,11 @@ button {
     margin:0;
     padding:0;
     cursor: pointer;
-    font-size: 15px;
+    font-size: 1em;
+}
+
+button:hover {
+    background:lightgrey;
 }
 
 .nav-btns {
@@ -27,15 +29,10 @@ button {
 
 
 .prev,
-.next,
-.reload {
-    width: 80px;
-    margin: 5px;
-    padding: 5px;
-}
-
-.reload {
-    padding: 5px;
+.next {
+    width: 6em;
+    margin: .5em;
+    padding: .5em;
 }
 
 
@@ -81,8 +78,7 @@ button {
 }
 
 #skipbox {
-    width: 150px;
-    height: 20px
+    width: 6em;
 }
 
 
