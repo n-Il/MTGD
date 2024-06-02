@@ -7,6 +7,10 @@
     margin-bottom: 1em;
     font-family:'Times New Roman', Times, serif
 }
+.resultimage{
+    cursor: pointer;
+    width: 20%;
+}
 
 #info-text{
     color:grey;

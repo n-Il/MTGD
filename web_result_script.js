@@ -97,8 +97,7 @@ function setupImages(start,end){
     for (let i = start; i < end;i++){
         let image = document.createElement('img');
         image.src = results[i][0];
-        image.style['cursor'] = "pointer";
-        image.style['width']  = '20%';
+        image.classList.add('resultimage');
         image.addEventListener("click",function(){window.open(results[i][1]),"_blank"});
         resultImages.appendChild(image);
     }
