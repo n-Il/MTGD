@@ -132,6 +132,19 @@ function next(){
     }
 }
 
+function gototop(div){
+    //check if visible, if so then scroll(0,0)
+    scroll(0,0);
+}
+window.addEventListener("scroll", function (){
+    let scrollTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+    if(scrollTop != 0){
+        document.getElementById("gototop").style.display='inline';
+    }else{
+        document.getElementById("gototop").style.display='none';
+    }
+})
+
 window.onload=function() {
     infoIcon.addEventListener('mouseout', hideToolTip);
     infoIcon.addEventListener('mouseover', showToolTip);
