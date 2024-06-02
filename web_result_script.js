@@ -5,7 +5,7 @@ let resultEndIndex = Math.min(pageSize,results.length);
 let infoIcon = document.querySelector(".info-icon");
 //this code sets up the text at the top
 document.getElementById("query").innerText = "using query: " + query;
-document.getElementById("total").innerText = "collected("+collectionUnique+" Unique). Filtered from "+scryfallTotalResults+" total results from Scryfall ";
+document.getElementById("total").innerText = "("+collectionUnique+" Unique). Filtered from "+scryfallTotalResults+" total results from Scryfall ";
 //setup the drop down text options
 updatePageSizes();
 //setup the drop down on-clicks
@@ -133,27 +133,15 @@ function next(){
     }
 }
 
-
-
-
 window.onload=function() {
-
     infoIcon.addEventListener('mouseout', hideToolTip);
     infoIcon.addEventListener('mouseover', showToolTip);
-    
     function hideToolTip () {
-        const queryToolTip = document.getElementById('query');
-        queryToolTip.style.display ='none';
-        const totalToolTip = document.getElementById('total');
-        totalToolTip.style.display ='none';
+        const infoToolTip = document.getElementById('info-text');
+        infoToolTip.style.display ='none';
     }
-
     function showToolTip () {
-        const queryToolTip = document.getElementById('query');
-        queryToolTip.style.display = 'inline';
-        const totalToolTip = document.getElementById('total');
-        totalToolTip.style.display = 'inline';
+        const infoToolTip = document.getElementById('info-text');
+        infoToolTip.style.display = 'block';
     }
-
-
   }

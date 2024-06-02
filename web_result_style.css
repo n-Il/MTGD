@@ -8,11 +8,11 @@
     font-family:'Times New Roman', Times, serif
 }
 
-#query{
-    display:none
-}
-#total{
-    display:none
+#info-text{
+    color:grey;
+    position:absolute;
+    z-index:1;
+    display:none;
 }
 
 .info-icon{
