@@ -1,5 +1,7 @@
 sheets/*
+decks/*
 data/*
+!decks/EXAMPLE.csv
 __pycache__/*
 util/__pycache__/*
 util/3d-force-graph/__pycache__/*
