@@ -27,9 +27,6 @@ class sheets_util:
                         card["foil"] = False if card_split[4] == "" else True
                         card["list"] = False if card_split[5] == "" else True
                         card["lang"] = "en" if card_split[6] == "" else sheets_util.get_scryfall_lang(card_split[6]) 
-                        card["proxy"] = False if card_split[7] == "" else True
-                        card["commander"] = False if card_split[8] == "" else True
-                        card["category"] = card_split[9]
                         if card["list"]:
                             card["cn"] = card["set"].upper()+"-"+card["cn"]
                             card["set"] = "plst"
