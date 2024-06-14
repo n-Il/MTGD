@@ -6,8 +6,6 @@ __pycache__/*
 util/__pycache__/*
 util/3d-force-graph/__pycache__/*
 util/parse_datatypes/__pycache__/*
-collections/*
 !sheets/EXAMPLE.csv
 3d_force_graph_combos.html
-results.js
 todo
