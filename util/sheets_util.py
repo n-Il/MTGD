@@ -125,7 +125,11 @@ class sheets_util:
 
     @staticmethod
     def create_inverse_result_sheet(results):
-        with open("result_sheet.csv","w",encoding='utf-8') as f:
+        if not os.path.isdir('data'):
+            os.mkdir('data')
+        if not os.path.isdir('data/output'):
+            os.mkdir('data/output')
+        with open("data/output/result_sheet.csv","w",encoding='utf-8') as f:
             f.write("Count,Name,Price,Set,CN,Foil,Lang,CMC,ILINK\n")
             for card in results:
                 line = ""
@@ -167,7 +171,9 @@ class sheets_util:
         if not os.path.exists("data/images"):
             os.mkdir("data/images")
         to_download = []
-        with open("result_sheet.csv",encoding='utf-8') as f:
+        if not os.path.isdir('data/output'):
+            os.mkdir('data/output')
+        with open("data/output/result_sheet.csv",encoding='utf-8') as f:
             lines = f.read().split("\n")
             len_cards = str(len(lines) - 2)
             digits_len_cards = len(len_cards)
@@ -189,7 +195,11 @@ class sheets_util:
 
     @staticmethod
     def create_result_sheet(results):
-        with open("result_sheet.csv","w",encoding='utf-8') as f:
+        if not os.path.isdir('data'):
+            os.mkdir('data')
+        if not os.path.isdir('data/output'):
+            os.mkdir('data/output')
+        with open("data/output/result_sheet.csv","w",encoding='utf-8') as f:
             f.write("Count,Name,Price,Set,CN,Foil,Lang,CMC\n")
             for card in results:
                 if card["MTGD_foil_count"] > 0:

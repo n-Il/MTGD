@@ -36,11 +36,15 @@ def downloadimages():
 
 def collect():
     collection = mycollection()
-    if os.path.exists("mycollection.json"):
+    if not os.path.isdir('data'):
+        os.mkdir('data')
+    if not os.path.isdir('data/collection'):
+        os.mkdir('data/collection')
+    if os.path.exists("data/collection/mycollection.json"):
         print("ERROR:collection file exists")
     else:
         collection = sheets_util.get_collection()
-        with open("mycollection.json",'w',encoding='utf-8') as f:
+        with open("data/collection/mycollection.json",'w',encoding='utf-8') as f:
             f.write("[\n")
             i = 1
             total = len(collection) 
@@ -111,7 +115,11 @@ def q(inverse = False):
             else:
                 sheets_util.create_result_sheet(result)
             #create results.js
-            with open("results.js","w+",encoding='utf-8') as f:
+            if not os.path.isdir('data'):
+                os.mkdir('data')
+            if not os.path.isdir('data/output'):
+                os.mkdir('data/output')
+            with open("data/output/results.js","w+",encoding='utf-8') as f:
                 f.write("var query = \""+str(q)+"\";")
                 f.write("var collectionUnique = \""+str(query.unique_collection_cards)+"\";")
                 f.write("var scryfallTotalResults = \""+str(query.result_len)+"\";")
@@ -305,7 +313,11 @@ def testcommanderdecks():
         if collection.load_from_file():
             my_cards = collection.get_names_and_counts()
             del collection
-            with open("commander_decks.csv","w+",encoding='utf-8') as f:
+            if not os.path.isdir('data'):
+                os.mkdir('data')
+            if not os.path.isdir('data/output'):
+                os.mkdir('data/output')
+            with open("data/output/commander_decks.csv","w+",encoding='utf-8') as f:
                 f.write("Commander,Link,Missing,MissingLands,MissingNonLands,PriceMissingCards,PriceMissingLands,PriceMissingNonLands\n")
                 list_of_deck_files = list(map(lambda x: "data/archidekt/" + x,os.listdir("data/archidekt")))
                 for deck_file in list_of_deck_files:

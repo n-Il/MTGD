@@ -24,7 +24,7 @@ class mycollection:
                 result[card["name"]] = card["MTGD_foil_count"] + card["MTGD_nonfoil_count"]
         return result
 
-    def load_from_file(self,file = "mycollection.json"):
+    def load_from_file(self,file = "data/collection/mycollection.json"):
         if not os.path.exists(file):
             print("ERROR:"+str(file),"doesn't exist, please run '-collect'")
             return False
@@ -211,7 +211,11 @@ class mycollection:
         if os.path.exists("output_sheet.csv"):
             print("ERROR:output_sheet.csv already exists")
         else:
-            with open("output_sheet.csv","w",encoding='utf-8') as f:
+            if not os.path.isdir('data'):
+                os.mkdir('data')
+            if not os.path.isdir('data/output'):
+                os.mkdir('data/output')
+            with open("data/output/output_sheet.csv","w",encoding='utf-8') as f:
                 f.write("Count,Name,Price,Set,CN,Foil,Lang,CMC\n")
                 for card in self.cards:
                     if card["MTGD_foil_count"] > 0:
@@ -257,7 +261,11 @@ class mycollection:
         if os.path.exists("show_create_sheet.csv"):
             print("ERROR:show_create_sheet.csv already exists")
         else:
-            with open("show_create_sheet.csv","w",encoding='utf-8') as f:
+            if not os.path.isdir('data'):
+                os.mkdir('data')
+            if not os.path.isdir('data/output'):
+                os.mkdir('data/output')
+            with open("data/output/show_create_sheet.csv","w",encoding='utf-8') as f:
                 f.write("Count,Set,Set# (useme★),Card Name,Foil,List,Language(if not english)\n")
                 for card in self.cards:
                     if card["MTGD_foil_count"] > 0:

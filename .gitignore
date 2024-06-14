@@ -7,11 +7,7 @@ util/__pycache__/*
 util/3d-force-graph/__pycache__/*
 util/parse_datatypes/__pycache__/*
 collections/*
-mycollection.json
 !sheets/EXAMPLE.csv
-show_create_sheet.csv
-output_sheet.csv
-result_sheet.csv
-commander_decks.csv
 3d_force_graph_combos.html
 results.js
+todo
