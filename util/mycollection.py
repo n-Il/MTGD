@@ -258,7 +258,7 @@ class mycollection:
             print("ERROR:show_create_sheet.csv already exists")
         else:
             with open("show_create_sheet.csv","w",encoding='utf-8') as f:
-                f.write("Count,Set,Set# (useme★),Card Name,Foil,List,Language(if not english)\n")
+                f.write("Count,Set,Set# (useme★),Card Name,Foil,List,Language(if not english),Proxy,Commander,Category\n")
                 for card in self.cards:
                     if card["MTGD_foil_count"] > 0:
                         line = ""

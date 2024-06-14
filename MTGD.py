@@ -260,6 +260,8 @@ def findcommanderdecks():
 
 
 def testcommanderdecks_helper(deck,my_cards):
+    #DEBUG
+    print("id:",deck["id"])
     missing_lands = 0
     missing_nonlands = 0
     price_missing_lands = 0 
@@ -270,10 +272,13 @@ def testcommanderdecks_helper(deck,my_cards):
             in_deck_categories.add(cat["name"])
     for card in deck["cards"]:
         #check if in deck(versus maybeboard)
-        if len(card["categories"]) == 0 or card["categories"][0] in in_deck_categories:
+        if card["categories"] is None or len(card["categories"]) == 0 or card["categories"][0] in in_deck_categories:
             in_collection = my_cards[card["card"]["oracleCard"]["name"]] if card["card"]["oracleCard"]["name"] in my_cards else 0
             have = min(card["quantity"],in_collection)
             have_not = card["quantity"] - have
+            #DEBUG
+            if have_not > 0:
+                print("\t Name:",card["card"]["oracleCard"]["name"])
             if "Land" in card["card"]["oracleCard"]["types"]:
                 missing_lands += have_not
                 price_missing_lands += (have_not * card["card"]["prices"]["tcg"])
