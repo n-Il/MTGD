@@ -1,19 +1,23 @@
+"""
+    Module provides functions for running MTGD
+"""
 import time
 import sys
 import requests
 import json
 import os
-from util.allcards_util import allcards_util
-from util.sheets_util import sheets_util
-from util.archidekt_util import archidekt_util 
-from util.combos_util import combos_util
 from util.mycollection import mycollection
 from util.myquery import myquery
+import util.scryfall_util as scryfall_util
+import util.combos_util as combos_util
+import util.archidekt_util as archidekt_util
+import util.sheets_util as sheets_util
 
 def card_lookup_cli():
+    """Runs a REPL for looking up cards based on set/cn"""
     print("Loading all cards into memory... This may take a while")
     #actuallyallcards = allcards_util.filtered_get(lambda x: True)
-    actuallyallcards = allcards_util.filtered_get(lambda x: x["lang"] == "en")
+    actuallyallcards = scryfall_util.filtered_load_all_cards(lambda x: x["lang"] == "en")
     x = None
     while True:
         x = input("Enter set and number:")
@@ -26,15 +30,18 @@ def card_lookup_cli():
             print("set:{} cn:{} not found".format(x.split()[0],x.split()[1]))
 
 def download():
-    allcards_util.download()
+    """Download all card data"""
+    scryfall_util.download_all_cards()
     #sys.exit(0) speeds up cleanup but probably not great practice
     
 def downloadimages():
+    """Download collection images"""
     collection = mycollection()
     if collection.load_from_file():
         collection.get_images()
 
 def collect():
+    """Load sheets and create collection file"""
     collection = mycollection()
     if not os.path.isdir('data'):
         os.mkdir('data')
@@ -56,6 +63,7 @@ def collect():
                     i += 1
             f.write("]")   
 def load():
+    """Load collection file and print out data summary"""
     collection = mycollection()
     if collection.load_from_file():
         print("\n******************************************")
@@ -83,16 +91,19 @@ def load():
         collection.topcards_info()
 
 def dash_compile():
+    """creates output sheet of human readable data from collection"""
     collection = mycollection()
     if collection.load_from_file():
         collection.spit_out_sheet()
 
 def showcreate():
+    """Creates show create sheet from collection"""
     collection = mycollection()
     if collection.load_from_file():
         collection.spit_out_create()
 
 def q(inverse = False):
+    """Runs a query and creates a result file for the web portal"""
     collection = mycollection()
     i = sys.argv.index('-q') if not inverse else sys.argv.index('-iq')
     if len(sys.argv) < (i+2):
@@ -136,6 +147,7 @@ def q(inverse = False):
  
 
 def combos():
+    """Print out all combos within the collection"""
     collection = mycollection()
     if collection.load_from_file():
         #combos is a dict wiht keys tuple of required cards and combo json value
@@ -146,6 +158,7 @@ def combos():
             combos_util.pp(combos)
 
 def comboforcegraph():
+    """Create the force graph for combos in collection"""
     collection = mycollection()
     if collection.load_from_file():
         combos = collection.get_combos()
@@ -153,11 +166,13 @@ def comboforcegraph():
             combos_util.force_graph2(combos)
 
 def allcombosforcegraph():
+    """Create the force graph for all combos"""
     combos = combos_util.get()
     if combos:
         combos_util.force_graph2(combos)
 
 def querycombosincludes():
+    """Run a query, Print combos that include a card within your collection"""
     collection = mycollection()
     i = sys.argv.index('-qci')
     if len(sys.argv) < (i+2):
@@ -197,6 +212,7 @@ def querycombosincludes():
             combos_util.pp(combos)
 
 def querycomboswithin():
+    """Run a query, Print combos with all cards within your collection"""
     collection = mycollection()
     i = sys.argv.index('-qcw')
     if len(sys.argv) < (i+2):
@@ -234,6 +250,7 @@ def querycomboswithin():
             combos_util.pp(combos)
 
 def findcommanderdecks():
+    """Function handling downloading commander decks"""
     #if we enter a commander, limit to that commander
     i = sys.argv.index('-findcommanderdecks')
     filter_commander = " ".join(sys.argv[i+1:])           
@@ -268,6 +285,7 @@ def findcommanderdecks():
 
 
 def testcommanderdecks_helper(deck,my_cards):
+    """Helper function that helps determine how many cards are within the collection"""
     missing_lands = 0
     missing_nonlands = 0
     price_missing_lands = 0 
@@ -295,6 +313,7 @@ def testcommanderdecks_helper(deck,my_cards):
     return csv
 
 def testcommanderdecks():
+    """Tests commander decks and generates a file that shows how many cards are missing"""
     #if we enter a commander, limit to that commander
     i = sys.argv.index('-testcommanderdecks')
     filter_commander = " ".join(sys.argv[i+1:])           
@@ -329,6 +348,7 @@ def testcommanderdecks():
                         f.write(testcommanderdecks_helper(deck,my_cards))
                         
 def help_text():
+    """Prints help text detailing all the argument options"""
     print("\tInput your collection using this spreadsheet:")
     print("\thttps://docs.google.com/spreadsheets/d/1d5eBMMFTuUER844bV1ShyKUCC8U0s6GVq10g9oklSmE/edit?usp=sharing")
     print("\tDownload the Sheet(s) as a CSV and put them in a folder called \"sheets\".")

@@ -1,21 +1,29 @@
+"""
+    Module provides the mycollection class
+"""
 import json
 import os
-from .sheets_util import sheets_util
-from .combos_util import combos_util
+import util.sheets_util as sheets_util
+import util.combos_util as combos_util
 import requests
 import time
 
 class mycollection:
+    """
+        Represents a card collection
+    """
     def __init__(self):
         self.cards = []
 
     def get_set_of_names(self):
+        """returns a set of card names from the collection"""
         result = set()
         for card in self.cards:
             result.add(card["name"])
         return result
     
     def get_names_and_counts(self):
+        """returns a set of card names and counts from the collection"""
         result = dict()
         for card in self.cards:
             if card["name"] in result:
@@ -25,6 +33,7 @@ class mycollection:
         return result
 
     def load_from_file(self,file = "data/collection/mycollection.json"):
+        """Loads the collection from the collection file"""
         if not os.path.exists(file):
             print("ERROR:"+str(file),"doesn't exist, please run '-collect'")
             return False
@@ -34,14 +43,15 @@ class mycollection:
                 return True
 
     def count_cards(self):
+        """Gets a total count of cards within the collection"""
         sum = 0
         for card in self.cards:
             sum+=card["MTGD_foil_count"]
             sum+=card["MTGD_nonfoil_count"]
         return sum
     
-    #price
     def price_info(self):
+        """Prints out summary information about pricing"""
         english_print_lookups = dict()
         for card in self.cards:
             if "MTGD_extra" in card:
@@ -155,6 +165,7 @@ class mycollection:
         print("Estimated Total Value(Ignoring <1$ cards): ${:.2f} USD".format(sum_ignore_bulk))
 
     def foil_info(self):
+        """Prints out foil and nonfoil counts"""
         foils = 0
         non_foils = 0
         for card in self.cards:
@@ -164,6 +175,7 @@ class mycollection:
         print("Non-Foils:",non_foils)
 
     def set_info(self):
+        """Prints out a summary of sets and how many cards you have from them"""
         sets = dict()
         for card in self.cards:
             if card["set_name"] in sets:
@@ -179,6 +191,7 @@ class mycollection:
             print(c,"cards from",s)
 
     def topcards_info(self):
+        """Prints out a summary of the cards that you have the most copies of"""
         names = dict()
         for card in self.cards:
             if card["name"] in names:
@@ -194,6 +207,7 @@ class mycollection:
             print(c,"copies of",s)
 
     def rarity_info(self):
+        """Prints out each rarity and how many cards you have from it"""
         rarities = dict()
         for card in self.cards:
             if card["rarity"] in rarities:
@@ -208,6 +222,7 @@ class mycollection:
                 
     
     def spit_out_sheet(self):
+        """Creates an output sheet, which is a more human readable form of the collection"""
         if os.path.exists("output_sheet.csv"):
             print("ERROR:output_sheet.csv already exists")
         else:
@@ -258,6 +273,7 @@ class mycollection:
                         f.write(line)
 
     def spit_out_create(self):
+        """Creates a show create sheet, which is a csv that can be used as a sheet to generate the collection"""
         if os.path.exists("show_create_sheet.csv"):
             print("ERROR:show_create_sheet.csv already exists")
         else:
@@ -336,6 +352,7 @@ class mycollection:
                         f.write(line)
 
     def get_images(self):
+        """downloads the images for a collection"""
         if not os.path.isdir('data'):
             os.mkdir('data')
         if not os.path.exists("data/images"):
@@ -373,6 +390,7 @@ class mycollection:
         print()#move cursor to next line for progress
 
     def get_combos(self):
+        """load the combo data and find combos that are within the collection"""
         combos = combos_util.get()
         if combos:
             my_cards = self.get_set_of_names()

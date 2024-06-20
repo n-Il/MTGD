@@ -1,7 +1,13 @@
+"""
+    Module provides the myquery Class
+"""
 import requests
 from .mycollection import mycollection
 import time
 class myquery:
+    """
+        Represents a scryfall query
+    """
     def __init__(self,col,q,inverse = False):
         self.q = q
         self.collection = dict()
@@ -63,6 +69,7 @@ class myquery:
         #self.warnings = None
 
     def load_collection(self,col):
+        """Loads the collection as a lookup table by card name"""
         for card in col.cards:
             if card["name"] in self.collection:
                 self.collection[card["name"]].append(card)
@@ -70,6 +77,7 @@ class myquery:
                 self.collection[card["name"]] = [card]
     
     def get(self):
+        """Runs the query and gets the initial results"""
         r = requests.get("https://api.scryfall.com/cards/search",params={"q":self.q})
         response = r.json()
         if response["object"] == "error":
@@ -83,6 +91,7 @@ class myquery:
             print("ERROR:Unkown Response Object",r["object"])
 
     def page_and_filter_inverse(self):
+        """Gathers results and filters them by our filter, as well as by not being in our collection"""
         results_counter = 0
         digits = len(str(self.result_len))
         print("Filtering:{}/{}".format(str(results_counter).zfill(digits),self.result_len),end="\r")
@@ -105,6 +114,7 @@ class myquery:
                 self.response = requests.get(self.response["next_page"]).json()
 
     def page_and_filter(self):
+        """Gathers results and filters them by our filter, as well as being in our collection"""
         results_counter = 0
         digits = len(str(self.result_len))
         print("Filtering:{}/{}".format(str(results_counter).zfill(digits),self.result_len),end="\r")
