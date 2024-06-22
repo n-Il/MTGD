@@ -1,7 +1,6 @@
 """
     Module provides utility functions for archidekt
 """
-
 import json
 import requests
 import os
@@ -128,25 +127,3 @@ def download_deck(deck_id: int):
         deck_data = json.loads(requests.get(link).content)
         with open('data/archidekt/'+str(deck_id)+".json","w+",encoding='utf-8') as f:
             json.dump(deck_data,f)
-
-def get_deck(deck_id):
-    """UNUSED code gets deck data for a given deck id(fails often)"""
-    #getting deck json from api
-    link = "https://www.archidekt.com/api/decks/{}/".format(deck_id)
-    deck_data = json.loads(requests.get(link).content)
-    return deck_data
-    
-def lookup_deck(deck_id):
-    """UNUSED code gets cards in deck for a given deck id(fails often)"""
-    deck_data = get_deck(deck_id)
-
-    #parsing the deck to cards
-    in_deck_categories = set()
-    for cat in deck_data["categories"]:
-        if cat["includedInDeck"]:
-            in_deck_categories.add(cat["name"])
-    cards_in_deck = dict()
-    for card in deck_data["cards"]:
-        if card["categories"][0] in in_deck_categories:
-            cards_in_deck[card["card"]["oracleCard"]["name"]] = card["quantity"]
-    return cards_in_deck 

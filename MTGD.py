@@ -6,7 +6,7 @@ import sys
 import requests
 import json
 import os
-from util.mycollection import mycollection
+from util.mycollection import mycollection,delete_collection_file
 from util.myquery import myquery
 import util.scryfall_util as scryfall_util
 import util.combos_util as combos_util
@@ -41,6 +41,11 @@ def downloadimages():
         collection.get_images()
 
 def collect():
+    i = sys.argv.index('-collect')
+    if len(sys.argv) >= (i+2):
+        q = " ".join(sys.argv[i+1:])
+        if q == "-force":
+            delete_collection_file()
     """Load sheets and create collection file"""
     collection = mycollection()
     if not os.path.isdir('data'):
@@ -48,7 +53,7 @@ def collect():
     if not os.path.isdir('data/collection'):
         os.mkdir('data/collection')
     if os.path.exists("data/collection/mycollection.json"):
-        print("ERROR:collection file exists")
+        print("ERROR:collection file exists(add -force if you would like to delete it)")
     else:
         collection = sheets_util.get_collection()
         with open("data/collection/mycollection.json",'w',encoding='utf-8') as f:

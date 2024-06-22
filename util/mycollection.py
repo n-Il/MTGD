@@ -8,6 +8,11 @@ import util.combos_util as combos_util
 import requests
 import time
 
+def delete_collection_file():
+    collection_location = "data/collection/mycollection.json"
+    if os.path.exists(collection_location):
+        os.remove(collection_location) 
+
 class mycollection:
     """
         Represents a card collection

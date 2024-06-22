@@ -10,6 +10,27 @@ import util.card_util as card_util
 import util.scryfall_util as scryfall_util
 
 
+def parse_sheet_card(line):
+    """Takes a line from a sheet and parses the fields into a dictionary"""
+    card = dict()
+    card_split = line.strip().split(',')
+    card["count"] = 1 if card_split[0] == "" else int(card_split[0])
+    card["set"] = card_split[1].lower()
+    card["cn"] = card_split[2]
+    card["name"] = card_split[3]#almost always empty
+    card["foil"] = False if card_split[4] == "" else True
+    card["list"] = False if card_split[5] == "" else True
+    card["lang"] = "en" if card_split[6] == "" else card_util.get_scryfall_lang(card_split[6]) 
+    card["proxy"] = False if card_split[7] == "" else True
+    if len(card_split) > 8:
+        card["commander"] = False if card_split[8] == "" else True
+    if len(card_split) > 9:
+        card["category"] = card_split[9]
+    if card["list"]:
+        card["cn"] = card["set"].upper()+"-"+card["cn"]
+        card["set"] = "plst"
+    return card
+
 def get_sheets():
     """Loads the cards from sheet files into memory"""
     sheets = dict()
@@ -22,18 +43,7 @@ def get_sheets():
             sheet = []
             with open(sheet_file,encoding='utf-8') as f:
                 for line in f.readlines()[1:]:
-                    card = dict()
-                    card_split = line.strip().split(',')
-                    card["count"] = 1 if card_split[0] == "" else int(card_split[0])
-                    card["set"] = card_split[1].lower()
-                    card["cn"] = card_split[2]
-                    card["name"] = card_split[3]#almost always empty
-                    card["foil"] = False if card_split[4] == "" else True
-                    card["list"] = False if card_split[5] == "" else True
-                    card["lang"] = "en" if card_split[6] == "" else card_util.get_scryfall_lang(card_split[6]) 
-                    if card["list"]:
-                        card["cn"] = card["set"].upper()+"-"+card["cn"]
-                        card["set"] = "plst"
+                    card = parse_sheet_card(line)
                     sheet.append(card)
             sheets[sheet_file] = sheet
     return sheets
