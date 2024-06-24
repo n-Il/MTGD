@@ -307,10 +307,12 @@ def testcommanderdecks_helper(deck,my_cards):
             have_not = card["quantity"] - have
             if "Land" in card["card"]["oracleCard"]["types"]:
                 missing_lands += have_not
-                price_missing_lands += (have_not * card["card"]["prices"]["tcg"])
+                if card["card"]["prices"]["tcg"]:
+                    price_missing_lands += have_not * card["card"]["prices"]["tcg"]
             else:
                 missing_nonlands += have_not
-                price_missing_nonlands += (have_not * card["card"]["prices"]["tcg"])
+                if card["card"]["prices"]["tcg"]:
+                    price_missing_nonlands += (have_not * card["card"]["prices"]["tcg"])
     #build the csv entry
     commander_name = deck["MTGD_Meta"]["MTGD_Commander"]
     link = "https://archidekt.com/decks/{}".format(deck["id"])
