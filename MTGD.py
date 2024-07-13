@@ -125,7 +125,8 @@ def q(inverse = False):
                 return
             if len(result) < 25:
                 for card in result:
-                    print((card["MTGD_foil_count"]+card["MTGD_nonfoil_count"]),card["name"])
+                    if card["MTGD_foil_count"] > 0 or card["MTGD_nonfoil_count"] > 0:
+                        print((card["MTGD_foil_count"]+card["MTGD_nonfoil_count"]),card["name"])
             if inverse:
                 sheets_util.create_inverse_result_sheet(result)
             else:
