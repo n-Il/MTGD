@@ -132,7 +132,7 @@ class mycollection:
                         sum_ignore_bulk += (price * card["MTGD_nonfoil_count"])
                 else:
                     if card["lang"] != "en":
-                        if english_print_lookups[(card["set"],card["collector_number"])]["usd"] != None:
+                        if (card["set"],card["collector_number"]) in english_print_lookups and english_print_lookups[(card["set"],card["collector_number"])]["usd"] != None:
                             print("Using english price for",card["name"]+". ["+card["set"]+","+card["collector_number"]+","+card["lang"]+"]")
                             price = float(english_print_lookups[(card["set"],card["collector_number"])]["usd"])
                             if price >= 100:
