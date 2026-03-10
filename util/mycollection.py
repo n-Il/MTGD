@@ -255,7 +255,11 @@ class mycollection:
                         #lang
                         line += card["lang"] + ","
                         #CMC
-                        line += str(card["cmc"]) + "\n"
+                        if "cmc" in card.keys():
+                            line += str(card["cmc"])
+                        else:
+                            line += "ERROR"
+                        line += "\n"
                         f.write(line)
                     if card["MTGD_nonfoil_count"] > 0:
                         line = ""
@@ -274,7 +278,11 @@ class mycollection:
                         #lang
                         line += card["lang"] + ","
                         #CMC
-                        line += str(card["cmc"]) + "\n"
+                        if "cmc" in card.keys():
+                            line += str(card["cmc"])
+                        else:
+                            line += "ERROR"
+                        line += "\n"
                         f.write(line)
 
     def spit_out_create(self):
