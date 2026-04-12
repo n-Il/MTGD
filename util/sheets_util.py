@@ -42,9 +42,18 @@ def get_sheets():
         if os.path.isfile(sheet_file) and sheet_file[-4:] == ".csv":
             sheet = []
             with open(sheet_file,encoding='utf-8') as f:
-                for line in f.readlines()[1:]:
+                line_count = 0 
+                for line in f.readlines():
+                    if line.strip() == "" or line.strip() == ",,,,,,,":
+                        print("WARNING:Skipped blank line at",str(line_count),"in",sheet_file)
+                        continue#skips blank or unused lines
+                    if line.strip() == "Count,Set,Set# (useme★),Card Name,Foil,List,Language(if not english),Proxy":
+                        if line_count != 0:
+                            print("Warning:Skipped misplaced header at",str(line_count),"in",sheet_file)
+                        continue#skips blank or unused lines
                     card = parse_sheet_card(line)
                     sheet.append(card)
+                    line_count += 1
             sheets[sheet_file] = sheet
     return sheets
                 
