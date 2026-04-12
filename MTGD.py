@@ -358,7 +358,7 @@ def testcommanderdecks():
 def help_text():
     """Prints help text detailing all the argument options"""
     print("\tInput your collection using the example spreadsheet in the provided sheets folder.")
-    print("\tFeel free to split the collection into multiple sheets")
+    print("\tFeel free to split the collection into multiple sheets.")
     print("")
     print("\t[-lookup] lets you test set/cn combinations against scryfall's english entries.(unoptimized).")
     print("\t[-download] downloads the latest scryfall data(~2GB) to your computer.")
