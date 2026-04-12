@@ -354,6 +354,19 @@ def testcommanderdecks():
                             if deck["MTGD_Meta"]["MTGD_Commander"] != filter_commander:
                                 continue#skip the current deck
                         f.write(testcommanderdecks_helper(deck,my_cards))
+
+def createsamplesheet():
+    sample = """,cmr,586,,Yes,,,
+2,tsp,205,,,,,
+3,lrw,289,,,,,
+4,rna,234,,,,,
+4,c20,185,,,,,
+4,j25,79,,,,,
+7,iko,12,,,,,
+150,lrw,51,,,,,"""
+    with open("sheets/sample.csv","w+",encoding="utf-8") as f:
+        f.write(sample)
+
                         
 def help_text():
     """Prints help text detailing all the argument options"""
@@ -377,6 +390,7 @@ def help_text():
     print("\t[-comboforcegraph] Generates a 3d force graph with the combos from your collection. Creates 3d_force_graph_combos.html. The file equires ./util/3d-force-graph/3d-force-graph.js")
     print("\t[-findcommanderdecks] WARNING_SLOW Download the 50 most recently created decks for each commander card in your collection.Follow this with a commander card name to search for all decks with a specific commander.")
     print("\t[-testcommanderdecks] Using the stored decks, generates a commander_decks.csv file which can be used to find contained or mostly contained decks.Follow this with a commander card name to only test decks with a specific commander.")
+    print("\t[-createsamplesheet] Populate a sample sheet in the sheets folder.")
 
 def main():
     if '-download' in sys.argv:
@@ -415,6 +429,8 @@ def main():
         findcommanderdecks()
     elif '-testcommanderdecks' in sys.argv:
         testcommanderdecks()
+    elif '-createsamplesheet' in sys.argv:
+        createsamplesheet() 
     elif '-help' in sys.argv:
         help_text()
     else:
