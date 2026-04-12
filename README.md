@@ -136,4 +136,4 @@ ALL OTHER FIELDS HAVE DEFAULTS AND CAN BE EMPTY
     - follow the '-testcommanderdecks' with a case sensitive commander name and it will only check downloaded decks for that commander
 
 ## Contact Us
-At this point in the project, please feel free to open an issue on github for non-serious matters. The example sheet from the '-help' dialogue also includes an email you are welcome to use.
+Please feel free to open an issue on github.
