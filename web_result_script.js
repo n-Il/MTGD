@@ -98,7 +98,12 @@ function setupImages(start,end){
         let image = document.createElement('img');
         image.src = results[i][0];
         image.classList.add('resultimage');
-        image.addEventListener("click",function(){window.open(results[i][1]),"_blank"});
+        image.addEventListener("click",
+            function(){
+                if (event.ctrlKey) {
+                    window.open(results[i][1],"_blank");
+                }
+            });
         resultImages.appendChild(image);
     }
 }
