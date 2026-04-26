@@ -102,6 +102,12 @@ function setupImages(start,end){
             function(){
                 if (event.ctrlKey) {
                     window.open(results[i][1],"_blank");
+                }else{
+                    if (this.classList.contains("highlightedcard")){
+                        this.classList.remove("highlightedcard") 
+                    }else{
+                        this.classList.add("highlightedcard") 
+                    }
                 }
             });
         resultImages.appendChild(image);

@@ -99,10 +99,12 @@ button:hover {
     display:block;
     padding-left: 2em;
     padding-right: 2em;
+    background-color: #0000;
 }
 .pagesize:hover {
     background-color: #FF0000;
 }
+
 /*
 .dropdownbutton:focus{
     background-color: #0000FF;
@@ -118,4 +120,8 @@ button:hover {
     width: 6em;
 }
 
-
+.highlightedcard {
+    box-shadow: 0 0 1em yellow, 0 0 2em red;
+    border-radius: 4.75% / 3.4%;
+    z-index: 3;
+}
