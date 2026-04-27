@@ -29,7 +29,7 @@
 .resultimage{
     position:relative;
     cursor: pointer;
-    width: 20%;
+    width: 15em;
     z-index:2;
 }
 
@@ -112,8 +112,8 @@ button:hover {
 */
 
 #results{
-    padding-left:20%;
-    padding-right:20%;
+    padding-left:10%;
+    padding-right:10%;
 }
 
 #skipbox {
