@@ -142,15 +142,13 @@ def q(inverse = False):
                 f.write("var scryfallTotalResults = \""+str(query.result_len)+"\";")
                 f.write("var results = [\n")
                 for card in result:
+                    image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
+                    web_image_src = card["image_uris"]["normal"] if "image_uris" in card else card["card_faces"][0]["image_uris"]["normal"]
                     if inverse:
-                        image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
-                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\",0,0],\n")
-                    else:
-                        if card["MTGD_foil_count"] > 0 or card["MTGD_nonfoil_count"] > 0:
-                            image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
-                            f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\","+str(card["MTGD_nonfoil_count"])+","+str(card["MTGD_foil_count"])+"],\n")
+                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\",\""+str(web_image_src)+"\",0,0],\n")
+                    elif card["MTGD_foil_count"] > 0 or card["MTGD_nonfoil_count"] > 0:
+                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\",\""+str(web_image_src)+"\","+str(card["MTGD_nonfoil_count"])+","+str(card["MTGD_foil_count"])+"],\n")
                 f.write("];\n")
- 
 
 def combos():
     """Print out all combos within the collection"""
