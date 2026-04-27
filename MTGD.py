@@ -144,11 +144,11 @@ def q(inverse = False):
                 for card in result:
                     if inverse:
                         image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
-                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\"],\n")
+                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\",0,0],\n")
                     else:
                         if card["MTGD_foil_count"] > 0 or card["MTGD_nonfoil_count"] > 0:
                             image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
-                            f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\"],\n")
+                            f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\","+str(card["MTGD_nonfoil_count"])+","+str(card["MTGD_foil_count"])+"],\n")
                 f.write("];\n")
  
 
