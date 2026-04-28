@@ -3,6 +3,7 @@ let pageSize = 50;
 let resultStartIndex = 0;
 let resultEndIndex = Math.min(pageSize,results.length);
 let infoIcon = document.querySelector(".info-icon");
+let web_or_local_images = 2 //0 is local, 2 is web
 //this code sets up the text at the top
 document.getElementById("query").innerText = "using query: " + query;
 document.getElementById("total").innerText = "("+collectionUnique+" Unique). Filtered from "+scryfallTotalResults+" total results from Scryfall ";
@@ -96,7 +97,7 @@ function setupImages(start,end){
     resultImages.innerHTML = '';
     for (let i = start; i < end;i++){
         let image = document.createElement('img');
-        image.src = results[i][0];
+        image.src = results[i][web_or_local_images];
         image.classList.add('resultimage');
         image.addEventListener("click",
             function(){

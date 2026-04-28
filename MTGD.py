@@ -373,8 +373,8 @@ def help_text():
     print("")
     print("\t[-lookup] lets you test set/cn combinations against scryfall's english entries.(unoptimized).")
     print("\t[-download] downloads the latest scryfall data(~2GB) to your computer.")
-    print("\t[-downloadimages] downloads the card images for cards in your collection to your computer.")
-    print("\t[-downloadinverseimages] downloads the card images for cards in result_sheet.csv, assuming you used the -iq flag to build it.")
+    #print("\t[-downloadimages] downloads the card images for cards in your collection to your computer.")
+    #print("\t[-downloadinverseimages] downloads the card images for cards in result_sheet.csv, assuming you used the -iq flag to build it.")
     print("\t[-downloadcombos] downloads a combo database from commander spellbook to your computer")
     print("\t[-collect] converts the sheets you created to a local collection file with scryfall data.")
     print("\t[-compile] converts the local collection file into a spreadsheet with card names among other fields.")
@@ -394,11 +394,23 @@ def main():
     if '-download' in sys.argv:
         download()
     elif '-downloadimages' in sys.argv:
-        downloadimages()
+        i = sys.argv.index('-downloadimages')
+        if len(sys.argv) >= (i+2):
+            query = " ".join(sys.argv[i+1:])
+            if query == "-force":
+                downloadimages()
+        else:
+            print("WARNING:downloadimages is no longer needed(add -force if you would like to run this operation anyway)")
     elif '-downloadcombos' in sys.argv:
         combos_util.download()
     elif '-downloadinverseimages' in sys.argv:
-        sheets_util.get_inverse_sheet_images()
+        i = sys.argv.index('-downloadinverseimages')
+        if len(sys.argv) >= (i+2):
+            query = " ".join(sys.argv[i+1:])
+            if query == "-force":
+                sheets_util.get_inverse_sheet_images()
+        else:
+            print("WARNING:downloadinverseimages is no longer needed(add -force if you would like to run this operation anyway)")
     elif '-lookup' in sys.argv:
         card_lookup_cli()
     elif '-collect' in sys.argv:
