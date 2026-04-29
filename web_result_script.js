@@ -132,7 +132,7 @@ function setupImages(start, end) {
         });
 
         image.addEventListener("mouseenter", () => {
-            document.getElementById("instruction-bar").innerText = "Highlighting is currently cosmetic only.\nCtrl + Click to open Scryfall link";
+            document.getElementById("instruction-bar").innerText = "Ctrl + Click to open Scryfall link.";
         });
         image.addEventListener("mouseleave", () => {
             document.getElementById("instruction-bar").innerText = "";

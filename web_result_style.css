@@ -3,6 +3,7 @@
     position: absolute;
     top: 3em;
     transform: translate(-50%, -50%);
+    color: red;
 }
 
 #gototop{
