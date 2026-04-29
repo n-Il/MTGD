@@ -4,6 +4,8 @@ let resultStartIndex = 0;
 let resultEndIndex = Math.min(pageSize,results.length);
 let infoIcon = document.querySelector(".info-icon");
 let web_or_local_images = 2 //0 is local, 2 is web
+let highlightSet = new Set()
+
 //this code sets up the text at the top
 document.getElementById("query").innerText = "using query: " + query;
 document.getElementById("total").innerText = "("+collectionUnique+" Unique). Filtered from "+scryfallTotalResults+" total results from Scryfall ";
@@ -108,14 +110,20 @@ function setupImages(start, end) {
         countLabel.classList.add('card-count');
         countLabel.innerText = (results[i][3] + results[i][4]);
 
+        if (highlightSet.has(results[i])){
+            image.classList.add("highlightedcard");
+        }
 
         image.addEventListener("click", function(event) {
             if (event.ctrlKey) {
                 window.open(results[i][1], "_blank");
             } else {
-                if (this.classList.contains("highlightedcard")) {
+                if (highlightSet.has(results[i])){
+                    highlightSet.delete(results[i]) 
                     this.classList.remove("highlightedcard");
-                } else {
+                }
+                else{
+                    highlightSet.add(results[i]) 
                     this.classList.add("highlightedcard");
                 }
             }
