@@ -92,26 +92,37 @@ function setupDropDownClicks(){
     }
 }
 
-function setupImages(start,end){
+function setupImages(start, end) {
     let resultImages = document.getElementById("results");
     resultImages.innerHTML = '';
-    for (let i = start; i < end;i++){
+
+    for (let i = start; i < end; i++) {
+        let container = document.createElement('div');
+        container.classList.add('card-container');
+
         let image = document.createElement('img');
         image.src = results[i][web_or_local_images];
         image.classList.add('resultimage');
-        image.addEventListener("click",
-            function(){
-                if (event.ctrlKey) {
-                    window.open(results[i][1],"_blank");
-                }else{
-                    if (this.classList.contains("highlightedcard")){
-                        this.classList.remove("highlightedcard") 
-                    }else{
-                        this.classList.add("highlightedcard") 
-                    }
+
+        let countLabel = document.createElement('div');
+        countLabel.classList.add('card-count');
+        countLabel.innerText = (results[i][3] + results[i][4]);
+
+        image.addEventListener("click", function(event) {
+            if (event.ctrlKey) {
+                window.open(results[i][1], "_blank");
+            } else {
+                if (this.classList.contains("highlightedcard")) {
+                    this.classList.remove("highlightedcard");
+                } else {
+                    this.classList.add("highlightedcard");
                 }
-            });
-        resultImages.appendChild(image);
+            }
+        });
+
+        container.appendChild(image);
+        container.appendChild(countLabel);
+        resultImages.appendChild(container);
     }
 }
 

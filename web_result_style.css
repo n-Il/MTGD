@@ -26,12 +26,7 @@
     margin-bottom: 1em;
     font-family:'Times New Roman', Times, serif
 }
-.resultimage{
-    position:relative;
-    cursor: pointer;
-    width: 15em;
-    z-index:2;
-}
+
 
 #info-text{
     color:grey;
@@ -124,4 +119,30 @@ button:hover {
     box-shadow: 0 0 1em yellow, 0 0 2em red;
     border-radius: 4.75% / 3.4%;
     z-index: 3;
+}
+
+
+.resultimage{
+    display: block;
+    cursor: pointer;
+    width: 15em;
+    z-index:2;
+    border-radius: 4.75% / 3.4%;
+}
+
+.card-container {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+.card-count {
+    position: absolute;
+    bottom: +0.3em;
+    right: +0.3em;
+    color: gold;
+    z-index: 4;
+    pointer-events: none; 
+    border-radius: 25%;
+    background: black;
 }
