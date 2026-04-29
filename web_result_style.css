@@ -74,6 +74,12 @@ button:hover {
     padding: .5em;
 }
 
+.export{
+    width: 20em;
+    margin: .5em;
+    padding: .5em;
+}
+
 
 .dropdownbutton{
     cursor: pointer;

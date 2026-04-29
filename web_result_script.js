@@ -114,6 +114,8 @@ function setupImages(start, end) {
             image.classList.add("highlightedcard");
         }
 
+        image.title = results[i][5]; 
+
         image.addEventListener("click", function(event) {
             if (event.ctrlKey) {
                 window.open(results[i][1], "_blank");
@@ -168,6 +170,18 @@ function next(){
         }
         updateBounds();
         setupImages(resultStartIndex,resultEndIndex);
+    }
+}
+
+async function exportbutton(){
+    let output = "";
+    highlightSet.forEach((element) => {
+        output += ((Math.max(element[3] + element[4],1)).toString() + " "+element[5]+"\n");
+    });
+    try {
+        await navigator.clipboard.writeText(output);
+    } catch (err) {
+        console.error('Failed to copy: ', err);
     }
 }
 

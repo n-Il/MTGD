@@ -145,9 +145,9 @@ def q(inverse = False):
                     image_src = "data/images/"+str(card["set"])+"/"+str(card["collector_number"])+"_"+card["lang"]+".png"
                     web_image_src = card["image_uris"]["normal"] if "image_uris" in card else card["card_faces"][0]["image_uris"]["normal"]
                     if inverse:
-                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\",\""+str(web_image_src)+"\",0,0],\n")
+                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\",\""+str(web_image_src)+"\",0,0,\""+str(card["name"])+"\"],\n")
                     elif card["MTGD_foil_count"] > 0 or card["MTGD_nonfoil_count"] > 0:
-                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\",\""+str(web_image_src)+"\","+str(card["MTGD_nonfoil_count"])+","+str(card["MTGD_foil_count"])+"],\n")
+                        f.write("[\""+image_src+"\""+",\""+card["scryfall_uri"]+"\",\""+str(web_image_src)+"\","+str(card["MTGD_nonfoil_count"])+","+str(card["MTGD_foil_count"])+",\""+card["name"]+"\"],\n")
                 f.write("];\n")
 
 def combos():
