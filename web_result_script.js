@@ -108,6 +108,7 @@ function setupImages(start, end) {
         countLabel.classList.add('card-count');
         countLabel.innerText = (results[i][3] + results[i][4]);
 
+
         image.addEventListener("click", function(event) {
             if (event.ctrlKey) {
                 window.open(results[i][1], "_blank");
@@ -118,6 +119,13 @@ function setupImages(start, end) {
                     this.classList.add("highlightedcard");
                 }
             }
+        });
+
+        image.addEventListener("mouseenter", () => {
+            document.getElementById("instruction-bar").innerText = "Highlighting is currently cosmetic only.\nCtrl + Click to open Scryfall link";
+        });
+        image.addEventListener("mouseleave", () => {
+            document.getElementById("instruction-bar").innerText = "";
         });
 
         container.appendChild(image);

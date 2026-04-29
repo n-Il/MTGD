@@ -1,3 +1,10 @@
+#instruction-bar{
+    left: 50%;
+    position: absolute;
+    top: 3em;
+    transform: translate(-50%, -50%);
+}
+
 #gototop{
     color: lightgrey;
     display:inline;
