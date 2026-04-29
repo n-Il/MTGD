@@ -5,6 +5,7 @@ import json
 import os
 import util.sheets_util as sheets_util
 import util.combos_util as combos_util
+import util.card_util as card_util
 import requests
 import time
 
@@ -327,7 +328,7 @@ class mycollection:
                         line += ","
                         #language?
                         if card["lang"] != "en":
-                            line += sheets_util.get_wotc_lang(card["lang"])
+                            line += card_util.get_wotc_lang(card["lang"])
                         line += "\n"
                         f.write(line)
                     if card["MTGD_nonfoil_count"] > 0:
@@ -360,7 +361,7 @@ class mycollection:
                         line += ","
                         #language?
                         if card["lang"] != "en":
-                            line += sheets_util.get_wotc_lang(card["lang"])
+                            line += card_util.get_wotc_lang(card["lang"])
                         line += "\n"
                         f.write(line)
 

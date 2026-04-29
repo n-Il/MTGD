@@ -365,6 +365,69 @@ def createsamplesheet():
     with open("sheets/sample.csv","w+",encoding="utf-8") as f:
         f.write(sample)
 
+def runtests():
+    #download
+    print("TEST:DOWNLOAD")
+    scryfall_util.download_all_cards() 
+    #lookup
+    print("TEST:LOOKUP")
+    print("Loading all cards into memory... This may take a while")
+    actuallyallcards = scryfall_util.filtered_load_all_cards(lambda x: x["lang"] == "en")
+    inputs = ["sos 1","sos 2","sos -1","exit"]
+    while True:
+        x = inputs.pop(0)
+        print("Enter set and number:",x)
+        if x == "exit":
+            break
+        if (x.split()[0],x.split()[1],"en") in actuallyallcards:
+            card = actuallyallcards[(x.split()[0],x.split()[1],"en")]
+            print(card["name"])
+        else:
+            print("set:{} cn:{} not found".format(x.split()[0],x.split()[1]))
+    #downloadcombos
+    print("TEST:DOWNLOADCOMBOS")
+    combos_util.download()
+    #createsamplesheet
+    print("TEST:CREATESAMPLESHEET")
+    createsamplesheet()
+    #collect(requires refactor)
+    print("TEST:COLLECT")
+    print("Unimplemented")
+    #compile
+    print("TEST:COMPILE")
+    dash_compile()
+    #load
+    print("TEST:LOAD")
+    load() 
+    #showcreate
+    print("TEST:SHOWCREATE")
+    showcreate()
+    #q(requires refactor)
+    print("TEST:QUERY")
+    print("Unimplemented")
+    #iq(requires refactor)
+    print("TEST:INVERSEQUERY")
+    print("Unimplemented")
+    #combos
+    print("TEST:COMBOS")
+    combos()
+    #qci(requires refactor)
+    print("TEST:QUERYCOMBOSINCLUDING")
+    print("Unimplemented")
+    #qcw(requires refactor)
+    print("TEST:QUERYCOMBOSWITHIN")
+    print("Unimplemented")
+    #comboforcegraph
+    print("TEST:COMBOFORCEGRAPH")
+    comboforcegraph()
+    #findcommanderdecks(should refactor to only query one commander)
+    print("TEST:FINDCOMMANDERDECKS")
+    print("Unimplemented")
+    #testcommanderdecks
+    print("TEST:TESTCOMMANDERDECKS")
+    print("Unimplemented")
+    return
+
                         
 def help_text():
     """Prints help text detailing all the argument options"""
@@ -443,6 +506,8 @@ def main():
         createsamplesheet() 
     elif '-help' in sys.argv:
         help_text()
+    elif '-efficacytests' in sys.argv:
+        runtests()
     else:
         print("no arguments found, try '-help'")
     
